@@ -27,92 +27,117 @@ PAGE_CSS = """
 <style>
     /* 全局样式 */
     .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background-color: #f8fafc;
+        font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
     }
     
-    /* 主标题样式 */
+    /* 主标题样式 - 专业深蓝色 */
     .main-title {
         text-align: center;
-        color: #2c3e50;
-        font-size: 2.5rem;
+        color: #1e293b;
+        font-size: 2.2rem;
         font-weight: 700;
         margin-bottom: 1rem;
         padding: 1rem;
-        background: linear-gradient(90deg, #3498db, #2ecc71);
+        background: linear-gradient(90deg, #3b82f6, #0ea5e9);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
     }
     
-    /* 指标卡片样式 - 现代扁平化设计 */
+    /* 指标卡片样式 - 现代简约设计 */
     .metric-card {
         background: white;
-        border-radius: 15px;
-        padding: 25px 20px;
+        border-radius: 12px;
+        padding: 20px 15px;
         text-align: center;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
-        border: 1px solid #e0e6ef;
+        border: 1px solid #e2e8f0;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        position: relative;
+        overflow: hidden;
     }
     
     .metric-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        border-color: #3498db;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-color: #3b82f6;
     }
     
     .metric-value {
-        font-size: 2.8rem;
-        font-weight: 800;
-        color: #2c3e50;
+        font-size: 2.4rem;
+        font-weight: 700;
+        color: #1e293b;
         line-height: 1.2;
-        margin-bottom: 8px;
-        background: linear-gradient(90deg, #3498db, #2ecc71);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        margin-bottom: 6px;
     }
     
     .metric-label {
-        font-size: 1rem;
-        color: #7f8c8d;
-        font-weight: 600;
+        font-size: 0.9rem;
+        color: #64748b;
+        font-weight: 500;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
     }
     
-    /* 侧边栏样式 */
-    .css-1d391kg {
-        background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    /* 侧边栏样式 - 深色渐变 */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
     }
     
-    /* 按钮样式 */
+    section[data-testid="stSidebar"] * {
+        color: #f1f5f9 !important;
+    }
+    
+    section[data-testid="stSidebar"] .stSelectbox,
+    section[data-testid="stSidebar"] .stMultiSelect,
+    section[data-testid="stSidebar"] .stRadio {
+        background-color: #334155 !important;
+        border-radius: 8px;
+        padding: 8px;
+    }
+    
+    section[data-testid="stSidebar"] .stSelectbox div,
+    section[data-testid="stSidebar"] .stMultiSelect div {
+        background-color: #334155 !important;
+    }
+    
+    section[data-testid="stSidebar"] input, 
+    section[data-testid="stSidebar"] select {
+        background-color: #475569 !important;
+        border-color: #475569 !important;
+        color: white !important;
+    }
+    
+    /* 按钮样式 - 渐变蓝色 */
     .stButton > button {
-        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         border: none;
-        padding: 12px 24px;
-        border-radius: 10px;
+        padding: 10px 20px;
+        border-radius: 8px;
         font-weight: 600;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
         width: 100%;
+        box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2);
     }
     
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
-        background: linear-gradient(135deg, #2980b9 0%, #1f639b 100%);
+        box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     }
     
-    /* 警告按钮 */
-    button[data-baseweb="button"][kind="secondary"] {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    /* 危险按钮 - 红色渐变 */
+    button[data-testid="baseButton-secondary"] {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
     }
     
     /* 数据编辑器样式 */
@@ -120,231 +145,176 @@ PAGE_CSS = """
         background: white;
         border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
     }
     
-    /* 热力图容器 */
-    .heatmap-container {
+    /* 图表容器 */
+    .chart-container {
         background: white;
-        border-radius: 15px;
+        border-radius: 12px;
         padding: 20px;
-        margin: 10px 0;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e0e6ef;
+        margin: 15px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
     }
     
     /* 分割线 */
     hr {
         border: none;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, #3498db, transparent);
-        margin: 30px 0;
-    }
-    
-    /* 卡片容器 */
-    .card-container {
-        background: white;
-        border-radius: 15px;
-        padding: 25px;
-        margin-bottom: 25px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e0e6ef;
-    }
-    
-    /* 选择框样式 */
-    .stSelectbox, .stMultiSelect {
-        background: white;
-        border-radius: 8px;
-    }
-    
-    /* 标签样式 */
-    label {
-        color: #2c3e50 !important;
-        font-weight: 600 !important;
-    }
-    
-    /* 侧边栏文本颜色 */
-    .css-1aumxhk {
-        color: white !important;
+        height: 1px;
+        background: #e2e8f0;
+        margin: 25px 0;
     }
     
     /* 侧边栏标题 */
     .sidebar-title {
-        color: white !important;
-        font-size: 1.2rem !important;
-        font-weight: 700 !important;
-        margin-bottom: 15px !important;
+        color: #f1f5f9 !important;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 12px;
         text-transform: uppercase;
         letter-spacing: 1px;
-        border-bottom: 2px solid #3498db;
-        padding-bottom: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #475569;
     }
     
-    /* 成功消息样式 */
+    /* 消息样式 */
     .stSuccess {
-        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
-        color: white !important;
-        border-radius: 10px !important;
-        border: none !important;
+        background-color: #d1fae5 !important;
+        color: #065f46 !important;
+        border: 1px solid #a7f3d0 !important;
+        border-radius: 8px !important;
     }
     
-    /* 错误消息样式 */
     .stError {
-        background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
-        color: white !important;
-        border-radius: 10px !important;
-        border: none !important;
+        background-color: #fee2e2 !important;
+        color: #991b1b !important;
+        border: 1px solid #fecaca !important;
+        border-radius: 8px !important;
     }
     
-    /* 警告消息样式 */
     .stWarning {
-        background: linear-gradient(135deg, #f39c12, #e67e22) !important;
-        color: white !important;
-        border-radius: 10px !important;
-        border: none !important;
+        background-color: #fef3c7 !important;
+        color: #92400e !important;
+        border: 1px solid #fde68a !important;
+        border-radius: 8px !important;
     }
     
-    /* 信息消息样式 */
     .stInfo {
-        background: linear-gradient(135deg, #3498db, #2980b9) !important;
-        color: white !important;
-        border-radius: 10px !important;
-        border: none !important;
+        background-color: #dbeafe !important;
+        color: #1e40af !important;
+        border: 1px solid #bfdbfe !important;
+        border-radius: 8px !important;
     }
     
     /* 标签页样式 */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background: #f8f9fa;
-        padding: 8px;
-        border-radius: 10px;
+        gap: 4px;
+        background: #f1f5f9;
+        padding: 6px;
+        border-radius: 8px;
     }
     
     .stTabs [data-baseweb="tab"] {
-        border-radius: 8px !important;
-        padding: 10px 20px !important;
+        border-radius: 6px !important;
+        padding: 8px 16px !important;
         background: white !important;
-        border: 1px solid #e0e6ef !important;
+        border: 1px solid #e2e8f0 !important;
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #3498db, #2980b9) !important;
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
         color: white !important;
-        box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2) !important;
+        box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2) !important;
     }
     
     /* 文件上传区域 */
     .stFileUploader {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        border: 2px dashed #3498db;
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 8px;
+        padding: 15px;
+        border: 2px dashed #cbd5e1;
         text-align: center;
     }
     
     /* 单选按钮组样式 */
     .stRadio > div {
-        background: white;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #e0e6ef;
+        background: #f8fafc;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
     }
     
     /* 下载链接样式 */
     .download-link {
         display: inline-block;
-        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
-        padding: 12px 24px;
-        border-radius: 10px;
+        padding: 10px 20px;
+        border-radius: 8px;
         text-decoration: none;
         font-weight: 600;
         text-align: center;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);
         margin-top: 10px;
+        width: 100%;
     }
     
     .download-link:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
         color: white;
         text-decoration: none;
     }
     
-    /* 进度条样式 */
-    .stProgress > div > div > div {
-        background: linear-gradient(90deg, #3498db, #2ecc71);
-    }
-    
     /* 容器间距优化 */
     .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    /* 侧边栏小标题 */
+    .sidebar-subtitle {
+        color: #94a3b8 !important;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 15px;
+        margin-bottom: 8px;
+    }
+    
+    /* 卡片图标装饰 */
+    .metric-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.2rem;
+        opacity: 0.2;
+    }
+    
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
     }
 </style>
 """
 st.markdown(PAGE_CSS, unsafe_allow_html=True)
-
-# -------------------- 优化后的指标卡片显示函数 --------------------
-def show_cards(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
-    if df0.empty:
-        return
-
-    total_tasks = df0["明细"].nunique()
-    total_people = df0["员工"].nunique()
-    ps = df0.groupby("员工")["值"].sum()
-    top_person = ps.idxmax() if not ps.empty else ""
-    avg_score = round(ps.mean(), 1) if not ps.empty else 0
-    
-    # 计算总完成值
-    total_value = int(df0["值"].sum()) if not df0.empty else 0
-
-    # 使用5个指标卡片
-    c1, c2, c3, c4, c5 = st.columns(5)
-    
-    # 任务数卡片
-    c1.markdown(f"""
-        <div class='metric-card'>
-            <div class='metric-value'>{total_tasks}</div>
-            <div class='metric-label'>📋 任务总数</div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # 参与人数卡片
-    c2.markdown(f"""
-        <div class='metric-card'>
-            <div class='metric-value'>{total_people}</div>
-            <div class='metric-label'>👥 参与人数</div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # 总完成值卡片
-    c3.markdown(f"""
-        <div class='metric-card'>
-            <div class='metric-value'>{total_value}</div>
-            <div class='metric-label'>🎯 总完成值</div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # 覆盖率最高人员卡片
-    c4.markdown(f"""
-        <div class='metric-card'>
-            <div class='metric-value'>{top_person[:6]}{'...' if len(top_person) > 6 else ''}</div>
-            <div class='metric-label'>🏆 最佳贡献者</div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # 平均完成值卡片
-    c5.markdown(f"""
-        <div class='metric-card'>
-            <div class='metric-value'>{avg_score}</div>
-            <div class='metric-label'>📈 人均完成值</div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("<hr/>", unsafe_allow_html=True)
 
 # -------------------- 初始化Session State --------------------
 if 'sheet_frames' not in st.session_state:
@@ -487,7 +457,8 @@ if uploaded_file is not None:
         st.sidebar.warning("⚠️ 文件中没有找到有效数据")
 
 # 显示当前文件状态
-st.sidebar.markdown(f"**📄 当前文件:** {st.session_state.file_name}")
+st.sidebar.markdown("<div class='sidebar-subtitle'>当前文件</div>", unsafe_allow_html=True)
+st.sidebar.markdown(f"**📄 {st.session_state.file_name}**")
 st.sidebar.markdown(f"**📊 工作表数量:** {len(st.session_state.sheets)}")
 
 # 下载按钮
@@ -612,7 +583,7 @@ sections_names = [
     "任务对比（堆叠柱状图）",
     "任务-人员热力图"
 ]
-view = st.sidebar.radio("切换视图", ["编辑数据", "大屏轮播", "单页模式", "显示所有视图", "能力分析"])
+view = st.sidebar.radio("切换视图", ["编辑数据", "大屏轮播", "单页模式", "显示所有视图", "能力分析"], horizontal=False)
 
 # -------------------- 数据合并 --------------------
 def get_merged_df(keys: List[str], groups: List[str]) -> pd.DataFrame:
@@ -631,6 +602,71 @@ def get_merged_df(keys: List[str], groups: List[str]) -> pd.DataFrame:
 
 df = get_merged_df(time_choice, selected_groups)
 
+# -------------------- 优化后的指标卡片显示函数 --------------------
+def show_cards(df0):
+    df0 = df0[df0["明细"] != "分数总和"]
+    if df0.empty:
+        return
+
+    total_tasks = df0["明细"].nunique()
+    total_people = df0["员工"].nunique()
+    ps = df0.groupby("员工")["值"].sum()
+    top_person = ps.idxmax() if not ps.empty else ""
+    avg_score = round(ps.mean(), 1) if not ps.empty else 0
+    
+    # 计算总完成值
+    total_value = int(df0["值"].sum()) if not df0.empty else 0
+
+    # 使用5个指标卡片
+    c1, c2, c3, c4, c5 = st.columns(5)
+    
+    # 任务数卡片
+    c1.markdown(f"""
+        <div class='metric-card'>
+            <div class='metric-icon'>📋</div>
+            <div class='metric-value'>{total_tasks}</div>
+            <div class='metric-label'>任务总数</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # 参与人数卡片
+    c2.markdown(f"""
+        <div class='metric-card'>
+            <div class='metric-icon'>👥</div>
+            <div class='metric-value'>{total_people}</div>
+            <div class='metric-label'>参与人数</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # 总完成值卡片
+    c3.markdown(f"""
+        <div class='metric-card'>
+            <div class='metric-icon'>🎯</div>
+            <div class='metric-value'>{total_value}</div>
+            <div class='metric-label'>总完成值</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # 覆盖率最高人员卡片
+    c4.markdown(f"""
+        <div class='metric-card'>
+            <div class='metric-icon'>🏆</div>
+            <div class='metric-value'>{top_person[:6]}{'...' if len(top_person) > 6 else ''}</div>
+            <div class='metric-label'>最佳贡献者</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # 平均完成值卡片
+    c5.markdown(f"""
+        <div class='metric-card'>
+            <div class='metric-icon'>📈</div>
+            <div class='metric-value'>{avg_score}</div>
+            <div class='metric-label'>人均完成值</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<hr/>", unsafe_allow_html=True)
+
 # -------------------- 图表函数 --------------------
 def chart_total(df0):
     df0 = df0[df0["明细"] != "分数总和"]
@@ -641,14 +677,14 @@ def chart_total(df0):
         text=emp_stats["值"],
         textposition="outside",
         hovertemplate="员工: %{x}<br>完成总值: %{y}<extra></extra>",
-        marker_color='#3498db'
+        marker_color='#3b82f6'
     ))
     fig.update_layout(
         template="plotly_white",
         xaxis_title="员工",
         yaxis_title="完成总值",
-        font=dict(size=12),
-        plot_bgcolor='rgba(240, 242, 245, 1)',
+        font=dict(size=12, color="#1e293b"),
+        plot_bgcolor='white',
         paper_bgcolor='white'
     )
     return fig
@@ -659,7 +695,7 @@ def chart_stack(df0):
     fig = go.Figure()
     
     # 使用更现代的颜色
-    colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#d35400']
+    colors = ['#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#06b6d4', '#f97316']
     
     for idx, emp in enumerate(df_pivot.columns):
         fig.add_trace(go.Bar(
@@ -674,8 +710,8 @@ def chart_stack(df0):
         template="plotly_white",
         xaxis_title="任务", 
         yaxis_title="完成值",
-        font=dict(size=12),
-        plot_bgcolor='rgba(240, 242, 245, 1)',
+        font=dict(size=12, color="#1e293b"),
+        plot_bgcolor='white',
         paper_bgcolor='white'
     )
     return fig
@@ -692,39 +728,41 @@ def chart_heat(df0):
     
     return {
         "backgroundColor": "white",
-        "tooltip": {"position": "top"},
+        "tooltip": {"position": "top", "backgroundColor": "rgba(255,255,255,0.9)", "borderColor": "#e2e8f0"},
         "grid": {"left": "10%", "right": "5%", "bottom": "15%", "top": "10%"},
         "xAxis": {
             "type": "category", 
             "data": emps, 
-            "axisLabel": {"color": "#2c3e50", "rotate": 45, "fontSize": 12},
-            "axisLine": {"lineStyle": {"color": "#bdc3c7"}}
+            "axisLabel": {"color": "#1e293b", "rotate": 45, "fontSize": 11},
+            "axisLine": {"lineStyle": {"color": "#cbd5e1"}}
         },
         "yAxis": {
             "type": "category", 
             "data": tasks, 
-            "axisLabel": {"color": "#2c3e50", "fontSize": 12},
-            "axisLine": {"lineStyle": {"color": "#bdc3c7"}}
+            "axisLabel": {"color": "#1e293b", "fontSize": 11},
+            "axisLine": {"lineStyle": {"color": "#cbd5e1"}}
         },
         "visualMap": {
             "min": 0, 
             "max": max([d[2] for d in data]) if data else 1, 
             "show": True,
-            "inRange": {"color": ["#ecf0f1", "#3498db", "#2980b9"]}, 
-            "textStyle": {"color": "#2c3e50"}
+            "inRange": {"color": ["#f1f5f9", "#60a5fa", "#2563eb"]}, 
+            "textStyle": {"color": "#1e293b"},
+            "left": "right",
+            "top": "center"
         },
         "series": [{
             "type": "heatmap", 
             "data": data, 
-            "emphasis": {"itemStyle": {"shadowBlur": 10}},
+            "emphasis": {"itemStyle": {"shadowBlur": 10, "shadowColor": "rgba(0, 0, 0, 0.5)"}},
             "itemStyle": {"borderColor": "#fff", "borderWidth": 1}
         }]
     }
 
 # -------------------- 定义鲜艳的颜色列表 --------------------
 BRIGHT_COLORS = [
-    "#3498db", "#2ecc71", "#e74c3c", "#f39c12", "#9b59b6",
-    "#1abc9c", "#d35400", "#34495e", "#16a085", "#8e44ad"
+    "#3b82f6", "#10b981", "#ef4444", "#f59e0b", "#8b5cf6",
+    "#06b6d4", "#f97316", "#1e293b", "#14b8a6", "#a855f7"
 ]
 
 # -------------------- 主页面 --------------------
@@ -739,7 +777,7 @@ if view == "编辑数据":
         show_cards(df)
         
         # 创建卡片容器
-        st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         st.info("📝 你可以直接编辑下面的表格，修改完成后点击【保存】按钮。")
         
         sheet_name = time_choice[0]
@@ -790,7 +828,7 @@ elif view == "大屏轮播":
         show_cards(df)
         
         # 创建卡片容器
-        st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         secs = [("完成排名", chart_total(df)),
                 ("任务对比", chart_stack(df)),
                 ("热力图", chart_heat(df))]
@@ -799,9 +837,7 @@ elif view == "大屏轮播":
         if isinstance(op, go.Figure):
             st.plotly_chart(op, use_container_width=True)
         else:
-            st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
-            st_echarts(op, height=f"{max(600, len(df['明细'].unique()) * 25)}px", theme="light")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st_echarts(op, height=f"{max(500, len(df['明细'].unique()) * 25)}px", theme="light")
         st.markdown("</div>", unsafe_allow_html=True)
 
 elif view == "单页模式":
@@ -811,7 +847,7 @@ elif view == "单页模式":
         show_cards(df)
         
         # 创建卡片容器
-        st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         choice = st.sidebar.selectbox("单页查看", sections_names, index=0)
         mapping = {
             "人员完成任务数量排名": chart_total(df),
@@ -824,9 +860,7 @@ elif view == "单页模式":
         if isinstance(chart_func, go.Figure):
             st.plotly_chart(chart_func, use_container_width=True)
         else:
-            st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
-            st_echarts(chart_func, height=f"{max(600, len(df['明细'].unique()) * 25)}px", theme="light")
-            st.markdown('</div>', unsafe_allow_html=True)
+            st_echarts(chart_func, height=f"{max(500, len(df['明细'].unique()) * 25)}px", theme="light")
         st.markdown("</div>", unsafe_allow_html=True)
 
 elif view == "显示所有视图":
@@ -840,21 +874,21 @@ elif view == "显示所有视图":
         
         for label, f in charts:
             # 每个图表一个卡片容器
-            st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+            st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
             st.subheader(f"📊 {label}")
             if isinstance(f, go.Figure):
                 st.plotly_chart(f, use_container_width=True)
             else:
-                st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
-                st_echarts(f, height=f"{max(600, len(df['明细'].unique()) * 25)}px", theme="light")
-                st.markdown('</div>', unsafe_allow_html=True)
+                st_echarts(f, height=f"{max(500, len(df['明细'].unique()) * 25)}px", theme="light")
             st.markdown("</div>", unsafe_allow_html=True)
 
 elif view == "能力分析":
     if not time_choice:
         st.warning("⚠️ 请在左侧选择时间点（月或季）后查看能力分析")
     else:
-        st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+        show_cards(df)
+        
+        st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
         st.subheader("📈 能力分析")
         employees = df["员工"].unique().tolist()
         selected_emps = st.sidebar.multiselect("选择员工（图1显示）", employees, default=employees[:min(5, len(employees))])
@@ -879,8 +913,8 @@ elif view == "能力分析":
                             y=df_pivot[emp].reindex(tasks, fill_value=0),
                             mode="lines+markers",
                             name=f"{sheet}-{emp}",
-                            line=dict(color=BRIGHT_COLORS[emp_color_idx % len(BRIGHT_COLORS)], width=3),
-                            marker=dict(size=8)
+                            line=dict(color=BRIGHT_COLORS[emp_color_idx % len(BRIGHT_COLORS)], width=2.5),
+                            marker=dict(size=7)
                         ))
                         emp_color_idx += 1
 
@@ -889,8 +923,8 @@ elif view == "能力分析":
                     y=df_pivot.sum(axis=1).reindex(tasks, fill_value=0),
                     mode="lines+markers",
                     name=sheet,
-                    line=dict(color=sheet_color_map[sheet], width=3),
-                    marker=dict(size=8)
+                    line=dict(color=sheet_color_map[sheet], width=2.5),
+                    marker=dict(size=7)
                 ))
 
                 fig3.add_trace(go.Bar(
@@ -898,38 +932,38 @@ elif view == "能力分析":
                     y=df_pivot.sum(axis=0),
                     name=sheet,
                     marker=dict(color=sheet_color_map[sheet]),
-                    width=0.3,
+                    width=0.25,
                 ))
 
         fig1.update_layout(
             title="员工任务完成情况",
             template="plotly_white",
-            font=dict(size=12),
+            font=dict(size=12, color="#1e293b"),
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=500,
-            plot_bgcolor='rgba(240, 242, 245, 1)',
+            height=450,
+            plot_bgcolor='white',
             paper_bgcolor='white'
         )
 
         fig2.update_layout(
             title="任务整体完成度趋势",
             template="plotly_white",
-            font=dict(size=12),
+            font=dict(size=12, color="#1e293b"),
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=500,
-            plot_bgcolor='rgba(240, 242, 245, 1)',
+            height=450,
+            plot_bgcolor='white',
             paper_bgcolor='white'
         )
 
         fig3.update_layout(
             title="员工整体完成度对比",
             template="plotly_white",
-            font=dict(size=12),
+            font=dict(size=12, color="#1e293b"),
             barmode="group",
             bargap=0.25,
             bargroupgap=0.005,
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=600,
+            height=500,
             xaxis=dict(
                 tickangle=45,
                 tickfont=dict(size=10)
@@ -937,7 +971,7 @@ elif view == "能力分析":
             yaxis=dict(
                 tickfont=dict(size=10)
             ),
-            plot_bgcolor='rgba(240, 242, 245, 1)',
+            plot_bgcolor='white',
             paper_bgcolor='white'
         )
 
@@ -949,15 +983,15 @@ elif view == "能力分析":
 # -------------------- 底部信息 --------------------
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;">
-<h4 style="color: white; margin-top: 0;">ℹ️ 使用说明：</h4>
-<ol style="color: #ecf0f1; font-size: 0.9rem;">
+<div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border-left: 3px solid #3b82f6;">
+<h4 style="color: #f1f5f9; margin-top: 0;">ℹ️ 使用说明：</h4>
+<ol style="color: #cbd5e1; font-size: 0.85rem; margin-left: -15px;">
 <li>上传Excel文件开始分析</li>
 <li>在侧边栏创建/选择时间点</li>
 <li>选择视图模式查看数据</li>
 <li>编辑数据后会自动保存到内存</li>
 <li>完成后可下载修改后的Excel文件</li>
 </ol>
-<p style="color: #bdc3c7; font-size: 0.8rem; margin-top: 10px; margin-bottom: 0;">📊 技能覆盖分析系统 v2.0</p>
+<p style="color: #94a3b8; font-size: 0.75rem; margin-top: 10px; margin-bottom: 0;">📊 技能覆盖分析系统 v2.0</p>
 </div>
 """, unsafe_allow_html=True)
