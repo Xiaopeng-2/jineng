@@ -27,97 +27,75 @@ PAGE_CSS = """
 <style>
     /* 全局样式 */
     .stApp {
-        background-color: #f8fafc;
+        background-color: #f8f9fa;
         font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
     }
     
-    /* 主标题样式 - 专业深蓝色 */
+    /* 主标题样式 */
     .main-title {
         text-align: center;
-        color: #1e293b;
-        font-size: 2.2rem;
+        color: #2c3e50;
+        font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
         padding: 1rem;
-        background: linear-gradient(90deg, #3b82f6, #0ea5e9);
+        background: linear-gradient(90deg, #3498db, #2980b9);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        padding-bottom: 15px;
-        border-bottom: 2px solid #e2e8f0;
+        border-bottom: 2px solid #eaeaea;
+        padding-bottom: 20px;
     }
     
-    /* 指标卡片样式 - 现代简约设计 */
+    /* 指标卡片样式 */
     .metric-card {
         background: white;
-        border-radius: 12px;
-        padding: 20px 15px;
+        border-radius: 10px;
+        padding: 20px;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #e0e6ef;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        position: relative;
-        overflow: hidden;
     }
     
     .metric-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        border-color: #3b82f6;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-color: #3498db;
     }
     
     .metric-value {
-        font-size: 2.4rem;
+        font-size: 2.8rem;
         font-weight: 700;
-        color: #1e293b;
+        color: #2c3e50;
         line-height: 1.2;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
     }
     
     .metric-label {
-        font-size: 0.9rem;
-        color: #64748b;
-        font-weight: 500;
+        font-size: 0.95rem;
+        color: #7f8c8d;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
     
-    /* 侧边栏样式 - 深色渐变 */
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+    /* 侧边栏样式 */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
     }
     
-    section[data-testid="stSidebar"] * {
-        color: #f1f5f9 !important;
-    }
-    
-    section[data-testid="stSidebar"] .stSelectbox,
-    section[data-testid="stSidebar"] .stMultiSelect,
-    section[data-testid="stSidebar"] .stRadio {
-        background-color: #334155 !important;
-        border-radius: 8px;
-        padding: 8px;
-    }
-    
-    section[data-testid="stSidebar"] .stSelectbox div,
-    section[data-testid="stSidebar"] .stMultiSelect div {
-        background-color: #334155 !important;
-    }
-    
-    section[data-testid="stSidebar"] input, 
-    section[data-testid="stSidebar"] select {
-        background-color: #475569 !important;
-        border-color: #475569 !important;
+    [data-testid="stSidebar"] * {
         color: white !important;
     }
     
-    /* 按钮样式 - 渐变蓝色 */
+    /* 按钮样式 */
     .stButton > button {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
         color: white;
         border: none;
         padding: 10px 20px;
@@ -126,130 +104,97 @@ PAGE_CSS = """
         font-size: 0.9rem;
         transition: all 0.3s ease;
         width: 100%;
-        box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2);
     }
     
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+        background: linear-gradient(135deg, #2980b9 0%, #1f639b 100%);
     }
     
-    /* 危险按钮 - 红色渐变 */
-    button[data-testid="baseButton-secondary"] {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    /* 危险按钮 */
+    [data-testid="baseButton-secondary"] {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
     }
     
     /* 数据编辑器样式 */
     .dataframe {
         background: white;
-        border-radius: 10px;
+        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
     
-    /* 图表容器 */
-    .chart-container {
+    /* 热力图容器 */
+    .heatmap-container {
         background: white;
-        border-radius: 12px;
+        border-radius: 10px;
         padding: 20px;
         margin: 15px 0;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e0e6ef;
     }
     
     /* 分割线 */
     hr {
         border: none;
         height: 1px;
-        background: #e2e8f0;
+        background: linear-gradient(90deg, transparent, #3498db, transparent);
         margin: 25px 0;
     }
     
     /* 侧边栏标题 */
     .sidebar-title {
-        color: #f1f5f9 !important;
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #475569;
+        color: white !important;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #3498db;
     }
     
     /* 消息样式 */
     .stSuccess {
-        background-color: #d1fae5 !important;
-        color: #065f46 !important;
-        border: 1px solid #a7f3d0 !important;
+        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+        color: white !important;
         border-radius: 8px !important;
+        border: none !important;
     }
     
     .stError {
-        background-color: #fee2e2 !important;
-        color: #991b1b !important;
-        border: 1px solid #fecaca !important;
+        background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+        color: white !important;
         border-radius: 8px !important;
+        border: none !important;
     }
     
     .stWarning {
-        background-color: #fef3c7 !important;
-        color: #92400e !important;
-        border: 1px solid #fde68a !important;
+        background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+        color: white !important;
         border-radius: 8px !important;
+        border: none !important;
     }
     
     .stInfo {
-        background-color: #dbeafe !important;
-        color: #1e40af !important;
-        border: 1px solid #bfdbfe !important;
-        border-radius: 8px !important;
-    }
-    
-    /* 标签页样式 */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 4px;
-        background: #f1f5f9;
-        padding: 6px;
-        border-radius: 8px;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        border-radius: 6px !important;
-        padding: 8px 16px !important;
-        background: white !important;
-        border: 1px solid #e2e8f0 !important;
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+        background: linear-gradient(135deg, #3498db, #2980b9) !important;
         color: white !important;
-        box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2) !important;
+        border-radius: 8px !important;
+        border: none !important;
     }
     
     /* 文件上传区域 */
     .stFileUploader {
-        background: rgba(59, 130, 246, 0.05);
+        background: rgba(52, 152, 219, 0.05);
         border-radius: 8px;
         padding: 15px;
-        border: 2px dashed #cbd5e1;
+        border: 2px dashed #bdc3c7;
         text-align: center;
-    }
-    
-    /* 单选按钮组样式 */
-    .stRadio > div {
-        background: #f8fafc;
-        padding: 8px;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
     }
     
     /* 下载链接样式 */
     .download-link {
         display: inline-block;
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
         color: white;
         padding: 10px 20px;
         border-radius: 8px;
@@ -257,60 +202,43 @@ PAGE_CSS = """
         font-weight: 600;
         text-align: center;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(16, 185, 129, 0.2);
+        box-shadow: 0 2px 5px rgba(46, 204, 113, 0.2);
         margin-top: 10px;
         width: 100%;
     }
     
     .download-link:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
         color: white;
         text-decoration: none;
     }
     
-    /* 容器间距优化 */
-    .block-container {
-        padding-top: 1.5rem;
-        padding-bottom: 1.5rem;
+    /* 滑动条样式 */
+    .stSlider {
+        padding: 10px 0;
     }
     
-    /* 侧边栏小标题 */
-    .sidebar-subtitle {
-        color: #94a3b8 !important;
-        font-size: 0.85rem;
-        font-weight: 500;
-        margin-top: 15px;
-        margin-bottom: 8px;
+    /* 选择框样式 */
+    .stSelectbox, .stMultiSelect {
+        background: white;
+        border-radius: 6px;
     }
     
-    /* 卡片图标装饰 */
-    .metric-icon {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 1.2rem;
-        opacity: 0.2;
+    /* 图表容器 */
+    .chart-container {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 15px 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e0e6ef;
     }
     
-    /* 滚动条样式 */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+    /* 数据表格样式 */
+    .stDataFrame {
+        border-radius: 8px;
+        overflow: hidden;
     }
 </style>
 """
@@ -457,8 +385,7 @@ if uploaded_file is not None:
         st.sidebar.warning("⚠️ 文件中没有找到有效数据")
 
 # 显示当前文件状态
-st.sidebar.markdown("<div class='sidebar-subtitle'>当前文件</div>", unsafe_allow_html=True)
-st.sidebar.markdown(f"**📄 {st.session_state.file_name}**")
+st.sidebar.markdown(f"**📄 当前文件:** {st.session_state.file_name}")
 st.sidebar.markdown(f"**📊 工作表数量:** {len(st.session_state.sheets)}")
 
 # 下载按钮
@@ -577,13 +504,47 @@ all_groups = list(set(all_groups))
 
 selected_groups = st.sidebar.multiselect("选择分组", all_groups, default=all_groups)
 
+# -------------------- 右侧滑动条 --------------------
+st.sidebar.markdown("<div class='sidebar-title'>⚙️ 显示设置</div>", unsafe_allow_html=True)
+
+# 添加滑动条控制图表大小
+chart_height = st.sidebar.slider(
+    "📏 图表高度",
+    min_value=300,
+    max_value=1000,
+    value=600,
+    step=50,
+    help="调整图表显示高度"
+)
+
+# 添加滑动条控制字体大小
+font_size = st.sidebar.slider(
+    "🔤 字体大小",
+    min_value=10,
+    max_value=20,
+    value=12,
+    step=1,
+    help="调整图表字体大小"
+)
+
+# 添加滑动条控制数据限制
+data_limit = st.sidebar.slider(
+    "📊 显示数据量",
+    min_value=10,
+    max_value=1000,
+    value=500,
+    step=10,
+    help="限制显示的数据行数（提高性能）"
+)
+
 # -------------------- 视图选择 --------------------
+st.sidebar.markdown("<div class='sidebar-title'>👁️ 视图选择</div>", unsafe_allow_html=True)
 sections_names = [
     "人员完成任务数量排名",
     "任务对比（堆叠柱状图）",
     "任务-人员热力图"
 ]
-view = st.sidebar.radio("切换视图", ["编辑数据", "大屏轮播", "单页模式", "显示所有视图", "能力分析"], horizontal=False)
+view = st.sidebar.radio("切换视图", ["编辑数据", "大屏轮播", "单页模式", "显示所有视图", "能力分析"])
 
 # -------------------- 数据合并 --------------------
 def get_merged_df(keys: List[str], groups: List[str]) -> pd.DataFrame:
@@ -598,9 +559,125 @@ def get_merged_df(keys: List[str], groups: List[str]) -> pd.DataFrame:
     if not dfs:
         st.warning("⚠️ 当前选择没有数据，请检查时间点或分组选择。")
         return pd.DataFrame()
-    return pd.concat(dfs, axis=0, ignore_index=True)
+    
+    merged_df = pd.concat(dfs, axis=0, ignore_index=True)
+    
+    # 应用数据限制
+    if len(merged_df) > data_limit:
+        st.info(f"⚠️ 数据量较大，已限制显示前 {data_limit} 行数据（总计 {len(merged_df)} 行）")
+        return merged_df.head(data_limit)
+    
+    return merged_df
 
 df = get_merged_df(time_choice, selected_groups)
+
+# -------------------- 图表函数（使用滑动条参数） --------------------
+def chart_total(df0):
+    df0 = df0[df0["明细"] != "分数总和"]
+    emp_stats = df0.groupby("员工")["值"].sum().sort_values(ascending=False).reset_index()
+    fig = go.Figure(go.Bar(
+        x=emp_stats["员工"],
+        y=emp_stats["值"],
+        text=emp_stats["值"],
+        textposition="outside",
+        hovertemplate="员工: %{x}<br>完成总值: %{y}<extra></extra>",
+        marker_color='#3498db'
+    ))
+    fig.update_layout(
+        template="plotly_white",
+        xaxis_title="员工",
+        yaxis_title="完成总值",
+        font=dict(size=font_size),
+        height=chart_height,
+        plot_bgcolor='white',
+        paper_bgcolor='white'
+    )
+    return fig
+
+def chart_stack(df0):
+    df0 = df0[df0["明细"] != "分数总和"]
+    df_pivot = df0.pivot_table(index="明细", columns="员工", values="值", aggfunc="sum", fill_value=0)
+    
+    # 限制显示的数据量
+    if len(df_pivot) > 50:
+        df_pivot = df_pivot.head(50)
+        st.info(f"⚠️ 任务数量较多，已限制显示前50个任务（总计 {len(df0['明细'].unique())} 个任务）")
+    
+    fig = go.Figure()
+    
+    # 使用更现代的颜色
+    colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#34495e']
+    
+    for idx, emp in enumerate(df_pivot.columns):
+        fig.add_trace(go.Bar(
+            x=df_pivot.index, 
+            y=df_pivot[emp], 
+            name=emp,
+            marker_color=colors[idx % len(colors)]
+        ))
+    
+    fig.update_layout(
+        barmode="stack", 
+        template="plotly_white",
+        xaxis_title="任务", 
+        yaxis_title="完成值",
+        font=dict(size=font_size),
+        height=chart_height,
+        plot_bgcolor='white',
+        paper_bgcolor='white'
+    )
+    return fig
+
+def chart_heat(df0):
+    df0 = df0[df0["明细"] != "分数总和"]
+    tasks = df0["明细"].unique().tolist()
+    emps = df0["员工"].unique().tolist()
+    
+    # 限制显示的数据量
+    if len(tasks) > 30:
+        tasks = tasks[:30]
+        st.info(f"⚠️ 任务数量较多，已限制显示前30个任务（总计 {len(df0['明细'].unique())} 个任务）")
+    
+    if len(emps) > 20:
+        emps = emps[:20]
+        st.info(f"⚠️ 员工数量较多，已限制显示前20名员工（总计 {len(df0['员工'].unique())} 名员工）")
+    
+    data = []
+    for i, t in enumerate(tasks):
+        for j, e in enumerate(emps):
+            v = int(df0[(df0["明细"] == t) & (df0["员工"] == e)]["值"].sum())
+            data.append([j, i, v])
+    
+    return {
+        "backgroundColor": "white",
+        "tooltip": {"position": "top"},
+        "grid": {"left": "10%", "right": "5%", "bottom": "15%", "top": "10%"},
+        "xAxis": {
+            "type": "category", 
+            "data": emps, 
+            "axisLabel": {"color": "#2c3e50", "rotate": 45, "fontSize": font_size-2},
+            "axisLine": {"lineStyle": {"color": "#bdc3c7"}}
+        },
+        "yAxis": {
+            "type": "category", 
+            "data": tasks, 
+            "axisLabel": {"color": "#2c3e50", "fontSize": font_size-2},
+            "axisLine": {"lineStyle": {"color": "#bdc3c7"}}
+        },
+        "visualMap": {
+            "min": 0, 
+            "max": max([d[2] for d in data]) if data else 1, 
+            "show": True,
+            "inRange": {"color": ["#ecf0f1", "#3498db", "#2980b9"]}, 
+            "textStyle": {"color": "#2c3e50", "fontSize": font_size-2}
+        },
+        "series": [{
+            "type": "heatmap", 
+            "data": data, 
+            "emphasis": {"itemStyle": {"shadowBlur": 10}},
+            "itemStyle": {"borderColor": "#fff", "borderWidth": 1}
+        }]
+    }
 
 # -------------------- 优化后的指标卡片显示函数 --------------------
 def show_cards(df0):
@@ -623,146 +700,49 @@ def show_cards(df0):
     # 任务数卡片
     c1.markdown(f"""
         <div class='metric-card'>
-            <div class='metric-icon'>📋</div>
             <div class='metric-value'>{total_tasks}</div>
-            <div class='metric-label'>任务总数</div>
+            <div class='metric-label'>📋 任务总数</div>
         </div>
     """, unsafe_allow_html=True)
     
     # 参与人数卡片
     c2.markdown(f"""
         <div class='metric-card'>
-            <div class='metric-icon'>👥</div>
             <div class='metric-value'>{total_people}</div>
-            <div class='metric-label'>参与人数</div>
+            <div class='metric-label'>👥 参与人数</div>
         </div>
     """, unsafe_allow_html=True)
     
     # 总完成值卡片
     c3.markdown(f"""
         <div class='metric-card'>
-            <div class='metric-icon'>🎯</div>
             <div class='metric-value'>{total_value}</div>
-            <div class='metric-label'>总完成值</div>
+            <div class='metric-label'>🎯 总完成值</div>
         </div>
     """, unsafe_allow_html=True)
     
     # 覆盖率最高人员卡片
     c4.markdown(f"""
         <div class='metric-card'>
-            <div class='metric-icon'>🏆</div>
-            <div class='metric-value'>{top_person[:6]}{'...' if len(top_person) > 6 else ''}</div>
-            <div class='metric-label'>最佳贡献者</div>
+            <div class='metric-value'>{top_person[:8]}{'...' if len(top_person) > 8 else ''}</div>
+            <div class='metric-label'>🏆 最佳贡献者</div>
         </div>
     """, unsafe_allow_html=True)
     
     # 平均完成值卡片
     c5.markdown(f"""
         <div class='metric-card'>
-            <div class='metric-icon'>📈</div>
             <div class='metric-value'>{avg_score}</div>
-            <div class='metric-label'>人均完成值</div>
+            <div class='metric-label'>📈 人均完成值</div>
         </div>
     """, unsafe_allow_html=True)
     
     st.markdown("<hr/>", unsafe_allow_html=True)
 
-# -------------------- 图表函数 --------------------
-def chart_total(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
-    emp_stats = df0.groupby("员工")["值"].sum().sort_values(ascending=False).reset_index()
-    fig = go.Figure(go.Bar(
-        x=emp_stats["员工"],
-        y=emp_stats["值"],
-        text=emp_stats["值"],
-        textposition="outside",
-        hovertemplate="员工: %{x}<br>完成总值: %{y}<extra></extra>",
-        marker_color='#3b82f6'
-    ))
-    fig.update_layout(
-        template="plotly_white",
-        xaxis_title="员工",
-        yaxis_title="完成总值",
-        font=dict(size=12, color="#1e293b"),
-        plot_bgcolor='white',
-        paper_bgcolor='white'
-    )
-    return fig
-
-def chart_stack(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
-    df_pivot = df0.pivot_table(index="明细", columns="员工", values="值", aggfunc="sum", fill_value=0)
-    fig = go.Figure()
-    
-    # 使用更现代的颜色
-    colors = ['#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#06b6d4', '#f97316']
-    
-    for idx, emp in enumerate(df_pivot.columns):
-        fig.add_trace(go.Bar(
-            x=df_pivot.index, 
-            y=df_pivot[emp], 
-            name=emp,
-            marker_color=colors[idx % len(colors)]
-        ))
-    
-    fig.update_layout(
-        barmode="stack", 
-        template="plotly_white",
-        xaxis_title="任务", 
-        yaxis_title="完成值",
-        font=dict(size=12, color="#1e293b"),
-        plot_bgcolor='white',
-        paper_bgcolor='white'
-    )
-    return fig
-
-def chart_heat(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
-    tasks = df0["明细"].unique().tolist()
-    emps = df0["员工"].unique().tolist()
-    data = []
-    for i, t in enumerate(tasks):
-        for j, e in enumerate(emps):
-            v = int(df0[(df0["明细"] == t) & (df0["员工"] == e)]["值"].sum())
-            data.append([j, i, v])
-    
-    return {
-        "backgroundColor": "white",
-        "tooltip": {"position": "top", "backgroundColor": "rgba(255,255,255,0.9)", "borderColor": "#e2e8f0"},
-        "grid": {"left": "10%", "right": "5%", "bottom": "15%", "top": "10%"},
-        "xAxis": {
-            "type": "category", 
-            "data": emps, 
-            "axisLabel": {"color": "#1e293b", "rotate": 45, "fontSize": 11},
-            "axisLine": {"lineStyle": {"color": "#cbd5e1"}}
-        },
-        "yAxis": {
-            "type": "category", 
-            "data": tasks, 
-            "axisLabel": {"color": "#1e293b", "fontSize": 11},
-            "axisLine": {"lineStyle": {"color": "#cbd5e1"}}
-        },
-        "visualMap": {
-            "min": 0, 
-            "max": max([d[2] for d in data]) if data else 1, 
-            "show": True,
-            "inRange": {"color": ["#f1f5f9", "#60a5fa", "#2563eb"]}, 
-            "textStyle": {"color": "#1e293b"},
-            "left": "right",
-            "top": "center"
-        },
-        "series": [{
-            "type": "heatmap", 
-            "data": data, 
-            "emphasis": {"itemStyle": {"shadowBlur": 10, "shadowColor": "rgba(0, 0, 0, 0.5)"}},
-            "itemStyle": {"borderColor": "#fff", "borderWidth": 1}
-        }]
-    }
-
 # -------------------- 定义鲜艳的颜色列表 --------------------
 BRIGHT_COLORS = [
-    "#3b82f6", "#10b981", "#ef4444", "#f59e0b", "#8b5cf6",
-    "#06b6d4", "#f97316", "#1e293b", "#14b8a6", "#a855f7"
+    "#3498db", "#2ecc71", "#e74c3c", "#f39c12", "#9b59b6",
+    "#1abc9c", "#d35400", "#34495e", "#16a085", "#8e44ad"
 ]
 
 # -------------------- 主页面 --------------------
@@ -784,7 +764,11 @@ if view == "编辑数据":
         try:
             # 获取原始数据
             original_df = st.session_state.sheet_frames[sheet_name].copy()
-            edited_df = st.data_editor(df, num_rows="dynamic", use_container_width=True)
+            
+            # 限制显示的数据量
+            display_df = df.head(data_limit) if len(df) > data_limit else df
+            
+            edited_df = st.data_editor(display_df, num_rows="dynamic", use_container_width=True)
 
             col1, col2 = st.columns(2)
             with col1:
@@ -837,7 +821,9 @@ elif view == "大屏轮播":
         if isinstance(op, go.Figure):
             st.plotly_chart(op, use_container_width=True)
         else:
-            st_echarts(op, height=f"{max(500, len(df['明细'].unique()) * 25)}px", theme="light")
+            st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
+            st_echarts(op, height=f"{chart_height}px", theme="light")
+            st.markdown('</div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
 elif view == "单页模式":
@@ -860,7 +846,9 @@ elif view == "单页模式":
         if isinstance(chart_func, go.Figure):
             st.plotly_chart(chart_func, use_container_width=True)
         else:
-            st_echarts(chart_func, height=f"{max(500, len(df['明细'].unique()) * 25)}px", theme="light")
+            st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
+            st_echarts(chart_func, height=f"{chart_height}px", theme="light")
+            st.markdown('</div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
 elif view == "显示所有视图":
@@ -879,7 +867,9 @@ elif view == "显示所有视图":
             if isinstance(f, go.Figure):
                 st.plotly_chart(f, use_container_width=True)
             else:
-                st_echarts(f, height=f"{max(500, len(df['明细'].unique()) * 25)}px", theme="light")
+                st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
+                st_echarts(f, height=f"{chart_height}px", theme="light")
+                st.markdown('</div>', unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
 elif view == "能力分析":
@@ -893,6 +883,11 @@ elif view == "能力分析":
         employees = df["员工"].unique().tolist()
         selected_emps = st.sidebar.multiselect("选择员工（图1显示）", employees, default=employees[:min(5, len(employees))])
         tasks = df["明细"].unique().tolist()
+        
+        # 限制显示的任务数量
+        if len(tasks) > 20:
+            tasks = tasks[:20]
+            st.info(f"⚠️ 任务数量较多，已限制显示前20个任务（总计 {len(df['明细'].unique())} 个任务）")
 
         fig1, fig2, fig3 = go.Figure(), go.Figure(), go.Figure()
         sheet_color_map = {}
@@ -938,9 +933,9 @@ elif view == "能力分析":
         fig1.update_layout(
             title="员工任务完成情况",
             template="plotly_white",
-            font=dict(size=12, color="#1e293b"),
+            font=dict(size=font_size),
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=450,
+            height=chart_height,
             plot_bgcolor='white',
             paper_bgcolor='white'
         )
@@ -948,9 +943,9 @@ elif view == "能力分析":
         fig2.update_layout(
             title="任务整体完成度趋势",
             template="plotly_white",
-            font=dict(size=12, color="#1e293b"),
+            font=dict(size=font_size),
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=450,
+            height=chart_height,
             plot_bgcolor='white',
             paper_bgcolor='white'
         )
@@ -958,18 +953,18 @@ elif view == "能力分析":
         fig3.update_layout(
             title="员工整体完成度对比",
             template="plotly_white",
-            font=dict(size=12, color="#1e293b"),
+            font=dict(size=font_size),
             barmode="group",
             bargap=0.25,
             bargroupgap=0.005,
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=500,
+            height=chart_height,
             xaxis=dict(
                 tickangle=45,
-                tickfont=dict(size=10)
+                tickfont=dict(size=font_size-2)
             ),
             yaxis=dict(
-                tickfont=dict(size=10)
+                tickfont=dict(size=font_size-2)
             ),
             plot_bgcolor='white',
             paper_bgcolor='white'
@@ -983,15 +978,29 @@ elif view == "能力分析":
 # -------------------- 底部信息 --------------------
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border-left: 3px solid #3b82f6;">
-<h4 style="color: #f1f5f9; margin-top: 0;">ℹ️ 使用说明：</h4>
-<ol style="color: #cbd5e1; font-size: 0.85rem; margin-left: -15px;">
+<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid #3498db;">
+<h4 style="color: white; margin-top: 0;">ℹ️ 使用说明：</h4>
+<ol style="color: #ecf0f1; font-size: 0.85rem; margin-left: -15px;">
 <li>上传Excel文件开始分析</li>
 <li>在侧边栏创建/选择时间点</li>
 <li>选择视图模式查看数据</li>
 <li>编辑数据后会自动保存到内存</li>
 <li>完成后可下载修改后的Excel文件</li>
 </ol>
-<p style="color: #94a3b8; font-size: 0.75rem; margin-top: 10px; margin-bottom: 0;">📊 技能覆盖分析系统 v2.0</p>
+<p style="color: #bdc3c7; font-size: 0.75rem; margin-top: 10px; margin-bottom: 0;">📊 技能覆盖分析系统 v2.0</p>
+</div>
+""", unsafe_allow_html=True)
+
+# -------------------- 性能信息显示 --------------------
+st.sidebar.markdown("---")
+st.sidebar.markdown(f"""
+<div style="color: #95a5a6; font-size: 0.8rem;">
+<p><strong>📈 数据统计：</strong></p>
+<ul style="margin-left: -20px;">
+<li>工作表数量: {len(st.session_state.sheets)}</li>
+<li>当前数据行数: {len(df)}</li>
+<li>图表高度: {chart_height}px</li>
+<li>字体大小: {font_size}px</li>
+</ul>
 </div>
 """, unsafe_allow_html=True)
