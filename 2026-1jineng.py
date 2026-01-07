@@ -260,73 +260,63 @@ if 'data_initialized' not in st.session_state:
 
 # -------------------- GUIbit数据读取函数 --------------------
 def load_data_from_gui():
-    """从GUIbit读取数据"""
+    """从GUIbit目录读取jixiao.xlsx文件"""
     try:
-        # 这里替换为实际的GUIbit数据读取逻辑
-        # 示例：从API、数据库或文件中读取数据
-        # 根据你的实际情况调整以下代码
+        # 定义GUIbit目录路径
+        guibit_path = "./guibit"  # 当前目录下的guibit文件夹
+        file_path = os.path.join(guibit_path, "jixiao.xlsx")
         
-        st.sidebar.info("🔄 正在从GUIbit读取数据...")
+        st.sidebar.info(f"🔄 正在从 {file_path} 读取数据...")
         
-        # 示例1：从CSV文件读取（如果GUIbit导出为CSV）
-        # data_path = "guibit_data.csv"
-        # if os.path.exists(data_path):
-        #     df = pd.read_csv(data_path)
-        #     # 处理数据...
+        # 检查文件是否存在
+        if not os.path.exists(file_path):
+            st.sidebar.error(f"❌ 文件不存在: {file_path}")
+            st.sidebar.info("请确保guibit文件夹和jixiao.xlsx文件在当前目录下")
+            return [], {}, "文件不存在"
         
-        # 示例2：从数据库读取
-        # import pymysql
-        # connection = pymysql.connect(host='localhost',
-        #                              user='user',
-        #                              password='password',
-        #                              database='database')
-        # query = "SELECT * FROM skill_coverage"
-        # df = pd.read_sql(query, connection)
-        
-        # 示例3：从API接口读取
-        # import requests
-        # response = requests.get('http://guibit-api/skills')
-        # data = response.json()
-        # df = pd.DataFrame(data)
-        
-        # 暂时使用示例数据
-        time.sleep(1)  # 模拟网络延迟
-        
-        # 创建示例数据
-        sheets = ["2024_Q1", "2024_Q2", "2024_Q3", "2024_Q4"]
+        # 读取Excel文件
+        xpd = pd.ExcelFile(file_path, engine='openpyxl')
         sheet_frames = {}
         
-        for sheet in sheets:
-            # 生成示例数据
-            num_tasks = 20
-            num_employees = 15
-            tasks = [f"任务{i+1}" for i in range(num_tasks)]
-            employees = [f"员工{chr(65+i)}" for i in range(num_employees)]
-            groups = ["A8", "B7", "VN", "C5", "D3"]
-            
-            data = []
-            for task in tasks:
-                task_value = pd.Series([1] * num_employees).sample(frac=0.7).tolist()
-                for i, emp in enumerate(employees):
-                    if i < len(task_value) and task_value[i] == 1:
-                        data.append({
-                            "明细": task,
-                            "员工": emp,
-                            "值": 1,
-                            "分组": groups[i % len(groups)]
-                        })
-            
-            df = pd.DataFrame(data)
-            # 计算数量总和
-            sum_df = df.groupby("明细", as_index=False)["值"].sum().rename(columns={"值": "数量总和"})
-            df = df.merge(sum_df, on="明细", how="left")
-            sheet_frames[sheet] = df
+        for sheet_name in xpd.sheet_names:
+            try:
+                df = pd.read_excel(xpd, sheet_name=sheet_name, engine='openpyxl')
+                if df.empty:
+                    continue
+                    
+                # 检查必要列
+                required_cols = {"明细", "员工", "值"}
+                if not required_cols.issubset(set(df.columns)):
+                    st.sidebar.warning(f"⚠️ 表 {sheet_name} 缺少必要列，已跳过。")
+                    continue
+
+                # 处理数据
+                if "数量总和" not in df.columns:
+                    # 如果没有数量总和列，计算并添加
+                    sum_df = (
+                        df.groupby("明细", as_index=False)["值"].sum()
+                        .rename(columns={"值": "数量总和"})
+                    )
+                    df = df.merge(sum_df, on="明细", how="left")
+                
+                sheet_frames[sheet_name] = df
+                
+                st.sidebar.success(f"✅ 已加载工作表: {sheet_name} ({len(df)}行数据)")
+                
+            except Exception as e:
+                st.sidebar.error(f"⚠️ 读取 {sheet_name} 时出错: {e}")
         
-        return sheets, sheet_frames, "GUIbit数据"
+        if not sheet_frames:
+            st.sidebar.error("❌ 未找到有效的工作表数据")
+            return [], {}, "无有效数据"
+        
+        sheets = list(sheet_frames.keys())
+        return sheets, sheet_frames, f"GUIbit数据 ({len(sheets)}个表)"
         
     except Exception as e:
-        st.sidebar.error(f"❌ 从GUIbit读取数据失败：{e}")
-        return [], {}, "加载失败"
+        st.sidebar.error(f"❌ 读取GUIbit文件失败：{e}")
+        st.sidebar.info("错误详情：请检查文件格式和路径")
+        return [], {}, "读取失败"
 
 # -------------------- 数据加载函数 --------------------
 def load_sheets_from_gui() -> Tuple[List[str], dict]:
@@ -402,7 +392,7 @@ st.sidebar.markdown("<div class='sidebar-title'>📁 备用数据源</div>", uns
 uploaded_file = st.sidebar.file_uploader(
     "上传Excel文件（备用）",
     type=['xlsx', 'xls'],
-    help="如果GUIbit不可用，可上传Excel文件"
+    help="如果GUIbit文件不可用，可上传Excel文件"
 )
 
 if uploaded_file is not None:
