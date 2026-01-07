@@ -182,15 +182,6 @@ PAGE_CSS = """
         border: none !important;
     }
     
-    /* 文件上传区域 */
-    .stFileUploader {
-        background: rgba(52, 152, 219, 0.05);
-        border-radius: 8px;
-        padding: 15px;
-        border: 2px dashed #bdc3c7;
-        text-align: center;
-    }
-    
     /* 下载链接样式 */
     .download-link {
         display: inline-block;
@@ -245,7 +236,7 @@ if 'sheet_frames' not in st.session_state:
 if 'sheets' not in st.session_state:
     st.session_state.sheets = []
 if 'file_name' not in st.session_state:
-    st.session_state.file_name = "未上传文件"
+    st.session_state.file_name = "未加载数据"
 if 'data_initialized' not in st.session_state:
     # 初始化示例数据到session state
     st.session_state.sheet_frames = {
@@ -267,76 +258,85 @@ if 'data_initialized' not in st.session_state:
     st.session_state.sheets = ["示例_2025_01", "示例_2025_02"]
     st.session_state.data_initialized = True
 
-# -------------------- 数据加载函数（从上传文件） --------------------
-def load_sheets_from_upload(uploaded_file) -> Tuple[List[str], dict]:
-    """从上传的Excel文件读取所有工作表"""
+# -------------------- GUIbit数据读取函数 --------------------
+def load_data_from_gui():
+    """从GUIbit读取数据"""
     try:
-        # 根据文件类型选择引擎
-        if uploaded_file.name.endswith('.xlsx'):
-            engine = "openpyxl"
-        elif uploaded_file.name.endswith('.xls'):
-            engine = "xlrd"
-        else:
-            st.sidebar.error("⚠️ 请上传Excel文件（.xlsx或.xls格式）")
-            return [], {}
+        # 这里替换为实际的GUIbit数据读取逻辑
+        # 示例：从API、数据库或文件中读取数据
+        # 根据你的实际情况调整以下代码
         
-        # 读取文件
-        xpd = pd.ExcelFile(uploaded_file, engine=engine)
-        frames = {}
+        st.sidebar.info("🔄 正在从GUIbit读取数据...")
         
-        for s in xpd.sheet_names:
-            try:
-                df0 = pd.read_excel(xpd, sheet_name=s, engine=engine)
-                if df0.empty:
-                    continue
-                    
-                # 检查必要列
-                required_cols = {"明细", "员工", "值"}
-                if not required_cols.issubset(set(df0.columns)):
-                    st.sidebar.warning(f"⚠️ 表 {s} 缺少必要列，已跳过。")
-                    continue
-
-                # 直接处理数据，不使用分组行解析
-                if "数量总和" not in df0.columns:
-                    # 如果没有数量总和列，计算并添加
-                    sum_df = (
-                        df0.groupby("明细", as_index=False)["值"].sum()
-                        .rename(columns={"值": "数量总和"})
-                    )
-                    df0 = df0.merge(sum_df, on="明细", how="left")
-                
-                # 如果数据是宽格式，转换为长格式
-                emp_cols = [c for c in df0.columns if c not in ["明细", "数量总和", "编号", "分组"]]
-                if len(emp_cols) > 0 and emp_cols != ["员工"]:
-                    # 宽格式数据，需要转换
-                    df_long = df0.melt(
-                        id_vars=["明细", "数量总和"] if "数量总和" in df0.columns else ["明细"],
-                        value_vars=emp_cols,
-                        var_name="员工",
-                        value_name="值"
-                    )
-                    # 如果有分组信息，保留分组列
-                    if "分组" in df0.columns:
-                        # 假设分组信息在第一行
-                        if not df0.empty:
-                            group_row = df0.iloc[0]
-                            group_dict = {}
-                            for col in df0.columns:
-                                if col in emp_cols:
-                                    group_dict[col] = group_row.get(col, "")
-                            df_long["分组"] = df_long["员工"].map(group_dict)
-                    frames[s] = df_long
-                else:
-                    # 已经是长格式数据
-                    frames[s] = df0
-                    
-            except Exception as e:
-                st.sidebar.error(f"⚠️ 读取 {s} 时出错: {e}")
-                
-        return xpd.sheet_names, frames
+        # 示例1：从CSV文件读取（如果GUIbit导出为CSV）
+        # data_path = "guibit_data.csv"
+        # if os.path.exists(data_path):
+        #     df = pd.read_csv(data_path)
+        #     # 处理数据...
+        
+        # 示例2：从数据库读取
+        # import pymysql
+        # connection = pymysql.connect(host='localhost',
+        #                              user='user',
+        #                              password='password',
+        #                              database='database')
+        # query = "SELECT * FROM skill_coverage"
+        # df = pd.read_sql(query, connection)
+        
+        # 示例3：从API接口读取
+        # import requests
+        # response = requests.get('http://guibit-api/skills')
+        # data = response.json()
+        # df = pd.DataFrame(data)
+        
+        # 暂时使用示例数据
+        time.sleep(1)  # 模拟网络延迟
+        
+        # 创建示例数据
+        sheets = ["2024_Q1", "2024_Q2", "2024_Q3", "2024_Q4"]
+        sheet_frames = {}
+        
+        for sheet in sheets:
+            # 生成示例数据
+            num_tasks = 20
+            num_employees = 15
+            tasks = [f"任务{i+1}" for i in range(num_tasks)]
+            employees = [f"员工{chr(65+i)}" for i in range(num_employees)]
+            groups = ["A8", "B7", "VN", "C5", "D3"]
+            
+            data = []
+            for task in tasks:
+                task_value = pd.Series([1] * num_employees).sample(frac=0.7).tolist()
+                for i, emp in enumerate(employees):
+                    if i < len(task_value) and task_value[i] == 1:
+                        data.append({
+                            "明细": task,
+                            "员工": emp,
+                            "值": 1,
+                            "分组": groups[i % len(groups)]
+                        })
+            
+            df = pd.DataFrame(data)
+            # 计算数量总和
+            sum_df = df.groupby("明细", as_index=False)["值"].sum().rename(columns={"值": "数量总和"})
+            df = df.merge(sum_df, on="明细", how="left")
+            sheet_frames[sheet] = df
+        
+        return sheets, sheet_frames, "GUIbit数据"
         
     except Exception as e:
-        st.sidebar.error(f"⚠️ 读取Excel文件失败：{e}")
+        st.sidebar.error(f"❌ 从GUIbit读取数据失败：{e}")
+        return [], {}, "加载失败"
+
+# -------------------- 数据加载函数 --------------------
+def load_sheets_from_gui() -> Tuple[List[str], dict]:
+    """从GUIbit读取所有工作表数据"""
+    try:
+        sheets, frames, source_name = load_data_from_gui()
+        return sheets, frames
+        
+    except Exception as e:
+        st.sidebar.error(f"⚠️ 读取数据失败：{e}")
         return [], {}
 
 # -------------------- 生成下载链接 --------------------
@@ -369,45 +369,104 @@ def repair_quantity_sums(dataframes):
             repaired_frames[sheet_name] = df
     return repaired_frames
 
-# -------------------- 侧边栏：文件上传 --------------------
-st.sidebar.markdown("<div class='sidebar-title'>📤 文件管理</div>", unsafe_allow_html=True)
+# -------------------- 侧边栏：数据加载 --------------------
+st.sidebar.markdown("<div class='sidebar-title'>📤 数据管理</div>", unsafe_allow_html=True)
 
-# 文件上传区域
-uploaded_file = st.sidebar.file_uploader(
-    "上传Excel文件",
-    type=['xlsx', 'xls'],
-    help="上传包含技能覆盖数据的Excel文件"
-)
-
-if uploaded_file is not None:
-    # 读取上传的文件
-    sheets, sheet_frames = load_sheets_from_upload(uploaded_file)
+# GUIbit数据加载按钮
+if st.sidebar.button("🔄 从GUIbit加载数据", use_container_width=True):
+    # 读取GUIbit数据
+    sheets, sheet_frames = load_sheets_from_gui()
     
     if sheets:
         # 保存到session state
         st.session_state.sheets = sheets
         st.session_state.sheet_frames = sheet_frames
-        st.session_state.file_name = uploaded_file.name
-        st.sidebar.success(f"✅ 已加载文件: {uploaded_file.name} ({len(sheets)}个工作表)")
+        st.session_state.file_name = f"GUIbit数据_{datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        st.sidebar.success(f"✅ 已从GUIbit加载数据 ({len(sheets)}个时间点)")
         
         # 自动修复数量总和
         st.session_state.sheet_frames = repair_quantity_sums(st.session_state.sheet_frames)
         st.sidebar.info("📊 已自动修复数量总和列")
+        st.rerun()
     else:
-        st.sidebar.warning("⚠️ 文件中没有找到有效数据")
+        st.sidebar.warning("⚠️ 未能从GUIbit加载到有效数据")
 
-# 显示当前文件状态
-st.sidebar.markdown(f"**📄 当前文件:** {st.session_state.file_name}")
-st.sidebar.markdown(f"**📊 工作表数量:** {len(st.session_state.sheets)}")
+# 显示当前数据状态
+st.sidebar.markdown(f"**📄 数据来源:** {st.session_state.file_name}")
+st.sidebar.markdown(f"**📊 时间点数量:** {len(st.session_state.sheets)}")
+
+# 手动上传数据作为备用方案
+st.sidebar.markdown("---")
+st.sidebar.markdown("<div class='sidebar-title'>📁 备用数据源</div>", unsafe_allow_html=True)
+
+uploaded_file = st.sidebar.file_uploader(
+    "上传Excel文件（备用）",
+    type=['xlsx', 'xls'],
+    help="如果GUIbit不可用，可上传Excel文件"
+)
+
+if uploaded_file is not None:
+    try:
+        # 根据文件类型选择引擎
+        if uploaded_file.name.endswith('.xlsx'):
+            engine = "openpyxl"
+        elif uploaded_file.name.endswith('.xls'):
+            engine = "xlrd"
+        else:
+            st.sidebar.error("⚠️ 请上传Excel文件（.xlsx或.xls格式）")
+        
+        # 读取文件
+        xpd = pd.ExcelFile(uploaded_file, engine=engine)
+        sheet_frames = {}
+        
+        for sheet_name in xpd.sheet_names:
+            try:
+                df = pd.read_excel(xpd, sheet_name=sheet_name, engine=engine)
+                if df.empty:
+                    continue
+                    
+                # 检查必要列
+                required_cols = {"明细", "员工", "值"}
+                if not required_cols.issubset(set(df.columns)):
+                    st.sidebar.warning(f"⚠️ 表 {sheet_name} 缺少必要列，已跳过。")
+                    continue
+
+                # 处理数据
+                if "数量总和" not in df.columns:
+                    # 如果没有数量总和列，计算并添加
+                    sum_df = (
+                        df.groupby("明细", as_index=False)["值"].sum()
+                        .rename(columns={"值": "数量总和"})
+                    )
+                    df = df.merge(sum_df, on="明细", how="left")
+                
+                sheet_frames[sheet_name] = df
+                
+            except Exception as e:
+                st.sidebar.error(f"⚠️ 读取 {sheet_name} 时出错: {e}")
+        
+        if sheet_frames:
+            # 保存到session state
+            st.session_state.sheets = list(sheet_frames.keys())
+            st.session_state.sheet_frames = sheet_frames
+            st.session_state.file_name = f"上传文件_{uploaded_file.name}"
+            st.sidebar.success(f"✅ 已从上传文件加载数据 ({len(sheet_frames)}个时间点)")
+            st.session_state.sheet_frames = repair_quantity_sums(st.session_state.sheet_frames)
+            st.rerun()
+        
+    except Exception as e:
+        st.sidebar.error(f"⚠️ 读取文件失败：{e}")
 
 # 下载按钮
 if st.session_state.sheet_frames:
+    st.sidebar.markdown("---")
     st.sidebar.markdown(get_excel_download_link(
         st.session_state.sheet_frames, 
         f"技能覆盖数据_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
     ), unsafe_allow_html=True)
 
 # -------------------- 智能化新增月份/季度 --------------------
+st.sidebar.markdown("---")
 st.sidebar.markdown("<div class='sidebar-title'>📅 新增数据时间点</div>", unsafe_allow_html=True)
 current_year = datetime.now().year
 year = st.sidebar.selectbox("选择年份", list(range(current_year - 2, current_year + 2)), index=2)
@@ -448,6 +507,7 @@ if st.sidebar.button("📝 创建新的时间点"):
             st.sidebar.error(f"❌ 创建失败：{e}")
 
 # -------------------- 删除工作表功能 --------------------
+st.sidebar.markdown("---")
 st.sidebar.markdown("<div class='sidebar-title'>🗑️ 删除时间点</div>", unsafe_allow_html=True)
 if st.session_state.sheets:
     sheet_to_delete = st.sidebar.selectbox("选择要删除的时间点", st.session_state.sheets, key="delete_sheet_select")
@@ -477,6 +537,7 @@ if st.session_state.sheets:
                     st.session_state.delete_confirm = False
 
 # -------------------- 数据修复工具 --------------------
+st.sidebar.markdown("---")
 st.sidebar.markdown("<div class='sidebar-title'>🔧 数据修复工具</div>", unsafe_allow_html=True)
 
 if st.sidebar.button("🧮 一键更新所有数量总和"):
@@ -488,6 +549,7 @@ if st.sidebar.button("🧮 一键更新所有数量总和"):
         st.sidebar.error(f"❌ 更新失败：{e}")
 
 # -------------------- 时间点选择优化 --------------------
+st.sidebar.markdown("---")
 st.sidebar.markdown("<div class='sidebar-title'>🔍 数据筛选</div>", unsafe_allow_html=True)
 years_available = sorted(list({s.split("_")[0] for s in st.session_state.sheets if "_" in s}))
 year_choice = st.sidebar.selectbox("筛选年份", ["全部年份"] + years_available)
@@ -498,7 +560,7 @@ else:
     time_candidates = sorted([s for s in st.session_state.sheets if s.startswith(year_choice)])
 
 if not time_candidates:
-    st.warning("⚠️ 暂无符合条件的数据，请先创建月份或季度。")
+    st.warning("⚠️ 暂无符合条件的数据，请先加载数据或创建时间点。")
     time_choice = []
 else:
     default_choice = time_candidates[:2] if len(time_candidates) >= 2 else time_candidates[:1]
@@ -517,6 +579,7 @@ all_groups = list(set(all_groups))
 selected_groups = st.sidebar.multiselect("选择分组", all_groups, default=all_groups)
 
 # -------------------- 视图选择 --------------------
+st.sidebar.markdown("---")
 st.sidebar.markdown("<div class='sidebar-title'>👁️ 视图选择</div>", unsafe_allow_html=True)
 sections_names = [
     "人员完成任务数量排名",
