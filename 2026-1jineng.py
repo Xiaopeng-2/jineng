@@ -214,11 +214,6 @@ PAGE_CSS = """
         text-decoration: none;
     }
     
-    /* 滑动条样式 */
-    .stSlider {
-        padding: 10px 0;
-    }
-    
     /* 选择框样式 */
     .stSelectbox, .stMultiSelect {
         background: white;
@@ -301,21 +296,38 @@ def load_sheets_from_upload(uploaded_file) -> Tuple[List[str], dict]:
                     st.sidebar.warning(f"⚠️ 表 {s} 缺少必要列，已跳过。")
                     continue
 
-                # 解析分组行
-                if not df0.empty and df0.iloc[0, 0] == "分组":
-                    groups = df0.iloc[0, 1:].tolist()
-                    df0 = df0.drop(0).reset_index(drop=True)
-                    emp_cols = [c for c in df0.columns if c not in ["明细", "数量总和", "编号"]]
-                    group_map = {emp: groups[i] if i < len(groups) else None for i, emp in enumerate(emp_cols)}
+                # 直接处理数据，不使用分组行解析
+                if "数量总和" not in df0.columns:
+                    # 如果没有数量总和列，计算并添加
+                    sum_df = (
+                        df0.groupby("明细", as_index=False)["值"].sum()
+                        .rename(columns={"值": "数量总和"})
+                    )
+                    df0 = df0.merge(sum_df, on="明细", how="left")
+                
+                # 如果数据是宽格式，转换为长格式
+                emp_cols = [c for c in df0.columns if c not in ["明细", "数量总和", "编号", "分组"]]
+                if len(emp_cols) > 0 and emp_cols != ["员工"]:
+                    # 宽格式数据，需要转换
                     df_long = df0.melt(
                         id_vars=["明细", "数量总和"] if "数量总和" in df0.columns else ["明细"],
                         value_vars=emp_cols,
                         var_name="员工",
                         value_name="值"
                     )
-                    df_long["分组"] = df_long["员工"].map(group_map)
+                    # 如果有分组信息，保留分组列
+                    if "分组" in df0.columns:
+                        # 假设分组信息在第一行
+                        if not df0.empty:
+                            group_row = df0.iloc[0]
+                            group_dict = {}
+                            for col in df0.columns:
+                                if col in emp_cols:
+                                    group_dict[col] = group_row.get(col, "")
+                            df_long["分组"] = df_long["员工"].map(group_dict)
                     frames[s] = df_long
                 else:
+                    # 已经是长格式数据
                     frames[s] = df0
                     
             except Exception as e:
@@ -504,39 +516,6 @@ all_groups = list(set(all_groups))
 
 selected_groups = st.sidebar.multiselect("选择分组", all_groups, default=all_groups)
 
-# -------------------- 右侧滑动条 --------------------
-st.sidebar.markdown("<div class='sidebar-title'>⚙️ 显示设置</div>", unsafe_allow_html=True)
-
-# 添加滑动条控制图表大小
-chart_height = st.sidebar.slider(
-    "📏 图表高度",
-    min_value=300,
-    max_value=1000,
-    value=600,
-    step=50,
-    help="调整图表显示高度"
-)
-
-# 添加滑动条控制字体大小
-font_size = st.sidebar.slider(
-    "🔤 字体大小",
-    min_value=10,
-    max_value=20,
-    value=12,
-    step=1,
-    help="调整图表字体大小"
-)
-
-# 添加滑动条控制数据限制
-data_limit = st.sidebar.slider(
-    "📊 显示数据量",
-    min_value=10,
-    max_value=1000,
-    value=500,
-    step=10,
-    help="限制显示的数据行数（提高性能）"
-)
-
 # -------------------- 视图选择 --------------------
 st.sidebar.markdown("<div class='sidebar-title'>👁️ 视图选择</div>", unsafe_allow_html=True)
 sections_names = [
@@ -561,17 +540,11 @@ def get_merged_df(keys: List[str], groups: List[str]) -> pd.DataFrame:
         return pd.DataFrame()
     
     merged_df = pd.concat(dfs, axis=0, ignore_index=True)
-    
-    # 应用数据限制
-    if len(merged_df) > data_limit:
-        st.info(f"⚠️ 数据量较大，已限制显示前 {data_limit} 行数据（总计 {len(merged_df)} 行）")
-        return merged_df.head(data_limit)
-    
     return merged_df
 
 df = get_merged_df(time_choice, selected_groups)
 
-# -------------------- 图表函数（使用滑动条参数） --------------------
+# -------------------- 图表函数（使用固定参数） --------------------
 def chart_total(df0):
     df0 = df0[df0["明细"] != "分数总和"]
     emp_stats = df0.groupby("员工")["值"].sum().sort_values(ascending=False).reset_index()
@@ -587,8 +560,8 @@ def chart_total(df0):
         template="plotly_white",
         xaxis_title="员工",
         yaxis_title="完成总值",
-        font=dict(size=font_size),
-        height=chart_height,
+        font=dict(size=12),
+        height=600,
         plot_bgcolor='white',
         paper_bgcolor='white'
     )
@@ -621,8 +594,8 @@ def chart_stack(df0):
         template="plotly_white",
         xaxis_title="任务", 
         yaxis_title="完成值",
-        font=dict(size=font_size),
-        height=chart_height,
+        font=dict(size=12),
+        height=600,
         plot_bgcolor='white',
         paper_bgcolor='white'
     )
@@ -655,13 +628,13 @@ def chart_heat(df0):
         "xAxis": {
             "type": "category", 
             "data": emps, 
-            "axisLabel": {"color": "#2c3e50", "rotate": 45, "fontSize": font_size-2},
+            "axisLabel": {"color": "#2c3e50", "rotate": 45, "fontSize": 10},
             "axisLine": {"lineStyle": {"color": "#bdc3c7"}}
         },
         "yAxis": {
             "type": "category", 
             "data": tasks, 
-            "axisLabel": {"color": "#2c3e50", "fontSize": font_size-2},
+            "axisLabel": {"color": "#2c3e50", "fontSize": 10},
             "axisLine": {"lineStyle": {"color": "#bdc3c7"}}
         },
         "visualMap": {
@@ -669,7 +642,7 @@ def chart_heat(df0):
             "max": max([d[2] for d in data]) if data else 1, 
             "show": True,
             "inRange": {"color": ["#ecf0f1", "#3498db", "#2980b9"]}, 
-            "textStyle": {"color": "#2c3e50", "fontSize": font_size-2}
+            "textStyle": {"color": "#2c3e50", "fontSize": 10}
         },
         "series": [{
             "type": "heatmap", 
@@ -765,9 +738,7 @@ if view == "编辑数据":
             # 获取原始数据
             original_df = st.session_state.sheet_frames[sheet_name].copy()
             
-            # 限制显示的数据量
-            display_df = df.head(data_limit) if len(df) > data_limit else df
-            
+            display_df = df.copy()
             edited_df = st.data_editor(display_df, num_rows="dynamic", use_container_width=True)
 
             col1, col2 = st.columns(2)
@@ -822,7 +793,7 @@ elif view == "大屏轮播":
             st.plotly_chart(op, use_container_width=True)
         else:
             st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
-            st_echarts(op, height=f"{chart_height}px", theme="light")
+            st_echarts(op, height="600px", theme="light")
             st.markdown('</div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -847,7 +818,7 @@ elif view == "单页模式":
             st.plotly_chart(chart_func, use_container_width=True)
         else:
             st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
-            st_echarts(chart_func, height=f"{chart_height}px", theme="light")
+            st_echarts(chart_func, height="600px", theme="light")
             st.markdown('</div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -868,7 +839,7 @@ elif view == "显示所有视图":
                 st.plotly_chart(f, use_container_width=True)
             else:
                 st.markdown('<div class="heatmap-container">', unsafe_allow_html=True)
-                st_echarts(f, height=f"{chart_height}px", theme="light")
+                st_echarts(f, height="600px", theme="light")
                 st.markdown('</div>', unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
@@ -933,9 +904,9 @@ elif view == "能力分析":
         fig1.update_layout(
             title="员工任务完成情况",
             template="plotly_white",
-            font=dict(size=font_size),
+            font=dict(size=12),
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=chart_height,
+            height=600,
             plot_bgcolor='white',
             paper_bgcolor='white'
         )
@@ -943,9 +914,9 @@ elif view == "能力分析":
         fig2.update_layout(
             title="任务整体完成度趋势",
             template="plotly_white",
-            font=dict(size=font_size),
+            font=dict(size=12),
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=chart_height,
+            height=600,
             plot_bgcolor='white',
             paper_bgcolor='white'
         )
@@ -953,18 +924,18 @@ elif view == "能力分析":
         fig3.update_layout(
             title="员工整体完成度对比",
             template="plotly_white",
-            font=dict(size=font_size),
+            font=dict(size=12),
             barmode="group",
             bargap=0.25,
             bargroupgap=0.005,
             legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-            height=chart_height,
+            height=600,
             xaxis=dict(
                 tickangle=45,
-                tickfont=dict(size=font_size-2)
+                tickfont=dict(size=10)
             ),
             yaxis=dict(
-                tickfont=dict(size=font_size-2)
+                tickfont=dict(size=10)
             ),
             plot_bgcolor='white',
             paper_bgcolor='white'
@@ -974,33 +945,3 @@ elif view == "能力分析":
         st.plotly_chart(fig2, use_container_width=True)
         st.plotly_chart(fig3, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
-
-# -------------------- 底部信息 --------------------
-st.sidebar.markdown("---")
-st.sidebar.markdown("""
-<div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; border-left: 3px solid #3498db;">
-<h4 style="color: white; margin-top: 0;">ℹ️ 使用说明：</h4>
-<ol style="color: #ecf0f1; font-size: 0.85rem; margin-left: -15px;">
-<li>上传Excel文件开始分析</li>
-<li>在侧边栏创建/选择时间点</li>
-<li>选择视图模式查看数据</li>
-<li>编辑数据后会自动保存到内存</li>
-<li>完成后可下载修改后的Excel文件</li>
-</ol>
-<p style="color: #bdc3c7; font-size: 0.75rem; margin-top: 10px; margin-bottom: 0;">📊 技能覆盖分析系统 v2.0</p>
-</div>
-""", unsafe_allow_html=True)
-
-# -------------------- 性能信息显示 --------------------
-st.sidebar.markdown("---")
-st.sidebar.markdown(f"""
-<div style="color: #95a5a6; font-size: 0.8rem;">
-<p><strong>📈 数据统计：</strong></p>
-<ul style="margin-left: -20px;">
-<li>工作表数量: {len(st.session_state.sheets)}</li>
-<li>当前数据行数: {len(df)}</li>
-<li>图表高度: {chart_height}px</li>
-<li>字体大小: {font_size}px</li>
-</ul>
-</div>
-""", unsafe_allow_html=True)
