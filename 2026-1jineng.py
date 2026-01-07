@@ -230,49 +230,33 @@ PAGE_CSS = """
 """
 st.markdown(PAGE_CSS, unsafe_allow_html=True)
 
-# -------------------- 初始化Session State --------------------
-if 'sheet_frames' not in st.session_state:
-    st.session_state.sheet_frames = {}
-if 'sheets' not in st.session_state:
-    st.session_state.sheets = []
-if 'file_name' not in st.session_state:
-    st.session_state.file_name = "未加载数据"
-if 'data_initialized' not in st.session_state:
-    # 初始化示例数据到session state
-    st.session_state.sheet_frames = {
-        "示例_2025_01": pd.DataFrame({
-            "明细": ["任务A", "任务B", "任务C", "任务D"],
-            "数量总和": [3, 2, 5, 4],
-            "员工": ["张三", "李四", "王五", "赵六"],
-            "值": [1, 1, 1, 1],
-            "分组": ["A8", "B7", "VN", "A8"]
-        }),
-        "示例_2025_02": pd.DataFrame({
-            "明细": ["任务A", "任务B", "任务C", "任务E"],
-            "数量总和": [4, 3, 2, 5],
-            "员工": ["张三", "王五", "赵六", "钱七"],
-            "值": [1, 1, 1, 1],
-            "分组": ["A8", "VN", "A8", "B7"]
-        })
-    }
-    st.session_state.sheets = ["示例_2025_01", "示例_2025_02"]
-    st.session_state.data_initialized = True
-
 # -------------------- GUIbit数据读取函数 --------------------
 def load_data_from_gui():
     """从GUIbit目录读取jixiao.xlsx文件"""
     try:
-        # 定义GUIbit目录路径
-        guibit_path = "./guibit"  # 当前目录下的guibit文件夹
-        file_path = os.path.join(guibit_path, "jixiao.xlsx")
+        # 定义GUIbit目录路径 - 根据你的项目结构调整
+        # 尝试多种可能的路径
+        possible_paths = [
+            "./guibit/jixiao.xlsx",  # 当前目录下的guibit文件夹
+            "./jixiao.xlsx",  # 当前目录下
+            "../guibit/jixiao.xlsx",  # 上级目录下的guibit文件夹
+            "jixiao.xlsx",  # 当前目录下
+        ]
+        
+        file_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                file_path = path
+                break
+        
+        if not file_path:
+            st.sidebar.error("❌ 未找到jixiao.xlsx文件")
+            st.sidebar.info("请确保jixiao.xlsx文件在以下任一位置：")
+            for path in possible_paths:
+                st.sidebar.info(f"  • {path}")
+            return [], {}, "文件不存在"
         
         st.sidebar.info(f"🔄 正在从 {file_path} 读取数据...")
-        
-        # 检查文件是否存在
-        if not os.path.exists(file_path):
-            st.sidebar.error(f"❌ 文件不存在: {file_path}")
-            st.sidebar.info("请确保guibit文件夹和jixiao.xlsx文件在当前目录下")
-            return [], {}, "文件不存在"
         
         # 读取Excel文件
         xpd = pd.ExcelFile(file_path, engine='openpyxl')
@@ -315,19 +299,71 @@ def load_data_from_gui():
         
     except Exception as e:
         st.sidebar.error(f"❌ 读取GUIbit文件失败：{e}")
-        st.sidebar.info("错误详情：请检查文件格式和路径")
         return [], {}, "读取失败"
 
-# -------------------- 数据加载函数 --------------------
-def load_sheets_from_gui() -> Tuple[List[str], dict]:
-    """从GUIbit读取所有工作表数据"""
-    try:
-        sheets, frames, source_name = load_data_from_gui()
-        return sheets, frames
+# -------------------- 初始化Session State --------------------
+if 'sheet_frames' not in st.session_state:
+    st.session_state.sheet_frames = {}
+if 'sheets' not in st.session_state:
+    st.session_state.sheets = []
+if 'file_name' not in st.session_state:
+    st.session_state.file_name = "未加载数据"
+if 'data_loaded' not in st.session_state:
+    st.session_state.data_loaded = False
+
+# -------------------- 自动加载数据 --------------------
+# 页面加载时自动从GUIbit读取数据
+if not st.session_state.data_loaded:
+    with st.spinner("正在从GUIbit加载数据..."):
+        sheets, sheet_frames, source_name = load_data_from_gui()
         
-    except Exception as e:
-        st.sidebar.error(f"⚠️ 读取数据失败：{e}")
-        return [], {}
+        if sheets:
+            # 保存到session state
+            st.session_state.sheets = sheets
+            st.session_state.sheet_frames = sheet_frames
+            st.session_state.file_name = source_name
+            st.session_state.data_loaded = True
+            
+            # 修复数量总和
+            def repair_quantity_sums(dataframes):
+                """修复所有数据框的数量总和列"""
+                repaired_frames = {}
+                for sheet_name, df in dataframes.items():
+                    if "明细" in df.columns and "值" in df.columns:
+                        sum_df = (
+                            df.groupby("明细", as_index=False)["值"].sum()
+                            .rename(columns={"值": "数量总和"})
+                        )
+                        df = df.drop(columns=["数量总和"], errors="ignore")
+                        df = df.merge(sum_df, on="明细", how="left")
+                        repaired_frames[sheet_name] = df
+                    else:
+                        repaired_frames[sheet_name] = df
+                return repaired_frames
+            
+            st.session_state.sheet_frames = repair_quantity_sums(st.session_state.sheet_frames)
+            st.success(f"✅ 已自动从GUIbit加载数据 ({len(sheets)}个时间点)")
+        else:
+            # 如果没有找到数据，使用示例数据
+            st.session_state.sheet_frames = {
+                "示例_2025_01": pd.DataFrame({
+                    "明细": ["任务A", "任务B", "任务C", "任务D"],
+                    "数量总和": [3, 2, 5, 4],
+                    "员工": ["张三", "李四", "王五", "赵六"],
+                    "值": [1, 1, 1, 1],
+                    "分组": ["A8", "B7", "VN", "A8"]
+                }),
+                "示例_2025_02": pd.DataFrame({
+                    "明细": ["任务A", "任务B", "任务C", "任务E"],
+                    "数量总和": [4, 3, 2, 5],
+                    "员工": ["张三", "王五", "赵六", "钱七"],
+                    "值": [1, 1, 1, 1],
+                    "分组": ["A8", "VN", "A8", "B7"]
+                })
+            }
+            st.session_state.sheets = ["示例_2025_01", "示例_2025_02"]
+            st.session_state.data_loaded = True
+            st.warning("⚠️ 未找到GUIbit数据，已加载示例数据")
 
 # -------------------- 生成下载链接 --------------------
 def get_excel_download_link(dataframes, filename="技能覆盖数据.xlsx"):
@@ -342,48 +378,20 @@ def get_excel_download_link(dataframes, filename="技能覆盖数据.xlsx"):
     href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{filename}" class="download-link">📥 下载Excel文件</a>'
     return href
 
-# -------------------- 修复数量总和 --------------------
-def repair_quantity_sums(dataframes):
-    """修复所有数据框的数量总和列"""
-    repaired_frames = {}
-    for sheet_name, df in dataframes.items():
-        if "明细" in df.columns and "值" in df.columns:
-            sum_df = (
-                df.groupby("明细", as_index=False)["值"].sum()
-                .rename(columns={"值": "数量总和"})
-            )
-            df = df.drop(columns=["数量总和"], errors="ignore")
-            df = df.merge(sum_df, on="明细", how="left")
-            repaired_frames[sheet_name] = df
-        else:
-            repaired_frames[sheet_name] = df
-    return repaired_frames
-
-# -------------------- 侧边栏：数据加载 --------------------
+# -------------------- 侧边栏：数据管理 --------------------
 st.sidebar.markdown("<div class='sidebar-title'>📤 数据管理</div>", unsafe_allow_html=True)
-
-# GUIbit数据加载按钮
-if st.sidebar.button("🔄 从GUIbit加载数据", use_container_width=True):
-    # 读取GUIbit数据
-    sheets, sheet_frames = load_sheets_from_gui()
-    
-    if sheets:
-        # 保存到session state
-        st.session_state.sheets = sheets
-        st.session_state.sheet_frames = sheet_frames
-        st.session_state.file_name = f"GUIbit数据_{datetime.now().strftime('%Y-%m-%d %H:%M')}"
-        st.sidebar.success(f"✅ 已从GUIbit加载数据 ({len(sheets)}个时间点)")
-        
-        # 自动修复数量总和
-        st.session_state.sheet_frames = repair_quantity_sums(st.session_state.sheet_frames)
-        st.sidebar.info("📊 已自动修复数量总和列")
-        st.rerun()
-    else:
-        st.sidebar.warning("⚠️ 未能从GUIbit加载到有效数据")
 
 # 显示当前数据状态
 st.sidebar.markdown(f"**📄 数据来源:** {st.session_state.file_name}")
 st.sidebar.markdown(f"**📊 时间点数量:** {len(st.session_state.sheets)}")
+
+# 刷新数据按钮
+if st.sidebar.button("🔄 刷新数据", use_container_width=True):
+    # 清除session state，重新加载数据
+    for key in ['sheet_frames', 'sheets', 'file_name', 'data_loaded']:
+        if key in st.session_state:
+            del st.session_state[key]
+    st.rerun()
 
 # 手动上传数据作为备用方案
 st.sidebar.markdown("---")
@@ -441,7 +449,6 @@ if uploaded_file is not None:
             st.session_state.sheet_frames = sheet_frames
             st.session_state.file_name = f"上传文件_{uploaded_file.name}"
             st.sidebar.success(f"✅ 已从上传文件加载数据 ({len(sheet_frames)}个时间点)")
-            st.session_state.sheet_frames = repair_quantity_sums(st.session_state.sheet_frames)
             st.rerun()
         
     except Exception as e:
@@ -532,6 +539,22 @@ st.sidebar.markdown("<div class='sidebar-title'>🔧 数据修复工具</div>", 
 
 if st.sidebar.button("🧮 一键更新所有数量总和"):
     try:
+        def repair_quantity_sums(dataframes):
+            """修复所有数据框的数量总和列"""
+            repaired_frames = {}
+            for sheet_name, df in dataframes.items():
+                if "明细" in df.columns and "值" in df.columns:
+                    sum_df = (
+                        df.groupby("明细", as_index=False)["值"].sum()
+                        .rename(columns={"值": "数量总和"})
+                    )
+                    df = df.drop(columns=["数量总和"], errors="ignore")
+                    df = df.merge(sum_df, on="明细", how="left")
+                    repaired_frames[sheet_name] = df
+                else:
+                    repaired_frames[sheet_name] = df
+            return repaired_frames
+        
         st.session_state.sheet_frames = repair_quantity_sums(st.session_state.sheet_frames)
         st.sidebar.success("✅ 所有工作表的数量总和已重新计算并更新！")
         st.rerun()
