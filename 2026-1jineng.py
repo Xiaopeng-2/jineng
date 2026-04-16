@@ -25,207 +25,79 @@ st.set_page_config(
 # -------------------- 优化后的页面样式 --------------------
 PAGE_CSS = """
 <style>
-    /* 全局样式 */
-    .stApp {
-        background-color: #f8f9fa;
-        font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-    }
-    
-    /* 主标题样式 */
-    .main-title {
-        text-align: center;
-        color: #2c3e50;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        padding: 1rem;
-        background: linear-gradient(90deg, #3498db, #2980b9);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        border-bottom: 2px solid #eaeaea;
-        padding-bottom: 20px;
-    }
-    
-    /* 指标卡片样式 */
-    .metric-card {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        border: 1px solid #e0e6ef;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .metric-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        border-color: #3498db;
-    }
-    
-    .metric-value {
-        font-size: 2.8rem;
-        font-weight: 700;
-        color: #2c3e50;
-        line-height: 1.2;
-        margin-bottom: 8px;
-    }
-    
-    .metric-label {
-        font-size: 0.95rem;
-        color: #7f8c8d;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    /* 侧边栏样式 */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-    }
-    
-    [data-testid="stSidebar"] * {
-        color: white !important;
-    }
-    
-    /* 按钮样式 */
-    .stButton > button {
-        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-    
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-        background: linear-gradient(135deg, #2980b9 0%, #1f639b 100%);
-    }
-    
-    /* 危险按钮 */
-    [data-testid="baseButton-secondary"] {
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
-    }
-    
-    /* 数据编辑器样式 */
-    .dataframe {
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    
-    /* 热力图容器 */
-    .heatmap-container {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 15px 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e0e6ef;
-    }
-    
-    /* 分割线 */
-    hr {
-        border: none;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, #3498db, transparent);
-        margin: 25px 0;
-    }
-    
-    /* 侧边栏标题 */
-    .sidebar-title {
-        color: white !important;
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid #3498db;
-    }
-    
-    /* 消息样式 */
-    .stSuccess {
-        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
-        color: white !important;
-        border-radius: 8px !important;
-        border: none !important;
-    }
-    
-    .stError {
-        background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
-        color: white !important;
-        border-radius: 8px !important;
-        border: none !important;
-    }
-    
-    .stWarning {
-        background: linear-gradient(135deg, #f39c12, #e67e22) !important;
-        color: white !important;
-        border-radius: 8px !important;
-        border: none !important;
-    }
-    
-    .stInfo {
-        background: linear-gradient(135deg, #3498db, #2980b9) !important;
-        color: white !important;
-        border-radius: 8px !important;
-        border: none !important;
-    }
-    
-    /* 下载链接样式 */
-    .download-link {
-        display: inline-block;
-        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        text-align: center;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(46, 204, 113, 0.2);
-        margin-top: 10px;
-        width: 100%;
-    }
-    
-    .download-link:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
-        color: white;
-        text-decoration: none;
-    }
-    
-    /* 选择框样式 */
-    .stSelectbox, .stMultiSelect {
-        background: white;
-        border-radius: 6px;
-    }
-    
-    /* 图表容器 */
-    .chart-container {
-        background: white;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 15px 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e0e6ef;
-    }
-    
-    /* 数据表格样式 */
-    .stDataFrame {
-        border-radius: 8px;
-        overflow: hidden;
-    }
+/* 全局主体背景 + 文字颜色 */
+body, [data-testid="stAppViewContainer"]{
+    background-color: #e6f7ff !important;
+    color: #003366 !important;
+}
+
+/* 侧边栏背景 + 文字 */
+[data-testid="stSidebar"]{
+    background-color: #d1e7f5 !important;
+    color: #003366 !important;
+}
+
+/* 按钮样式 */
+div.stButton>button{
+    background-color: #4cc9f0 !important;
+    color: #000000 !important;
+    border-radius:10px;
+    height:40px;
+    font-weight:700;
+    margin:5px 0;
+    width:100%;
+}
+div.stButton>button:hover{
+    background-color:#4895ef !important;
+    color:#ffffff !important;
+}
+
+/* 自定义指标卡片 */
+.metric-card{
+    background-color: #ffffff !important;
+    padding:20px;
+    border-radius:16px;
+    text-align:center;
+    box-shadow:0 0 15px rgba(0,0,0,0.08);
+}
+.metric-value{
+    font-size:36px;
+    font-weight:800;
+    color: #0066cc !important;
+}
+.metric-label{
+    font-size:14px;
+    color: #336699 !important;
+}
+
+/* 分割线 */
+hr{
+    border:none;
+    border-top:1px solid #bbd9f7;
+    margin:16px 0;
+}
+
+/* 热力图滚动容器 */
+.heatmap-container {
+    max-height: 700px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+/* 滚动条美化 */
+.heatmap-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.heatmap-container::-webkit-scrollbar-thumb {
+    background-color: #99c2ff;
+    border-radius: 4px;
+}
+.heatmap-container::-webkit-scrollbar-track {
+    background-color: #e6f7ff;
+}
 </style>
 """
 st.markdown(PAGE_CSS, unsafe_allow_html=True)
