@@ -85,45 +85,24 @@ hr{
 """
 st.markdown(PAGE_CSS, unsafe_allow_html=True)
 
-# -------------------- GUIbit数据读取函数 --------------------
-def load_data_from_gui():
-    """从GUIbit目录读取jixiao.xlsx文件"""
-    try:
-        # 定义GUIbit目录路径 - 根据你的项目结构调整
-        # 尝试多种可能的路径
-        possible_paths = [
-            "./guibit/jixiao.xlsx",  # 当前目录下的guibit文件夹
-            "./jixiao.xlsx",  # 当前目录下
-            "../guibit/jixiao.xlsx",  # 上级目录下的guibit文件夹
-            "jixiao.xlsx",  # 当前目录下
-        ]
-        
-        file_path = None
-        for path in possible_paths:
-            if os.path.exists(path):
-                file_path = path
-                break
-        
-        if not file_path:
-            st.sidebar.error("❌ 未找到jixiao.xlsx文件")
-            st.sidebar.info("请确保jixiao.xlsx文件在以下任一位置：")
-            for path in possible_paths:
-                st.sidebar.info(f"  • {path}")
-            return [], {}, "文件不存在"
-        
-        st.sidebar.info(f"🔄 正在从 {file_path} 读取数据...")
-        
-        # 读取Excel文件
-        xpd = pd.ExcelFile(file_path, engine='openpyxl')
-        sheet_frames = {}
-        
-        for sheet_name in xpd.sheet_names:
+# -------------------- 统一文件路径 --------------------
+SAVE_FILE = "jixiao.xlsx"
+
+# -------------------- 数据读取函数（修复版） --------------------
+@st.cache_data
+def load_sheets(file, ts=None) -> Tuple[List[str], dict]:
+    if not os.path.exists(file):
+        return [], {}
+    
+    xpd = pd.ExcelFile(file, engine='openpyxl')
+    sheet_frames = {}
+    
+    for s in xpd.sheet_names:
         try:
             df0 = pd.read_excel(xpd, sheet_name=s)
             if df0.empty:
                 continue
             if not {"明细", "员工", "值"}.issubset(df0.columns):
-                st.sidebar.warning(f"表 {s} 缺少必要列，已跳过。")
                 continue
 
             if df0.iloc[0, 0] == "分组":
@@ -138,21 +117,21 @@ def load_data_from_gui():
                     value_name="值"
                 )
                 df_long["分组"] = df_long["员工"].map(group_map)
-                frames[s] = df_long
+                sheet_frames[s] = df_long
             else:
-                frames[s] = df0
+                sheet_frames[s] = df0
         except Exception as e:
-            st.sidebar.error(f"读取 {s} 时出错: {e}")
-    return xpd.sheet_names, frames
+            st.sidebar.error(f"读取 {s} 出错: {e}")
+    return xpd.sheet_names, sheet_frames
 
 # -------------------- 文件读取 --------------------
 sheets, sheet_frames = [], {}
 try:
     mtime = os.path.getmtime(SAVE_FILE) if os.path.exists(SAVE_FILE) else None
     sheets, sheet_frames = load_sheets(SAVE_FILE, ts=mtime)
-    st.sidebar.success(f"已加载库文件 {SAVE_FILE}")
+    st.sidebar.success(f"✅ 已加载：{SAVE_FILE}")
 except Exception as e:
-    st.sidebar.warning(f"读取库文件失败：{e}")
+    st.sidebar.warning(f"⚠️ 读取文件失败：{e}")
     sheet_frames = {
         "示例_2025_01": pd.DataFrame({
             "明细": ["任务A", "任务B", "任务C"],
@@ -197,15 +176,15 @@ if st.sidebar.button("创建新的时间点"):
                 st.sidebar.info("未找到上期数据，创建空白模板")
 
             if os.path.exists(SAVE_FILE):
-                with pd.ExcelWriter(SAVE_FILE, mode="a", engine="openpyxl") as writer:
+                with pd.ExcelWriter(SAVE_FILE, mode="a", if_sheet_exists="replace", engine="openpyxl") as writer:
                     base_df.to_excel(writer, sheet_name=new_sheet_name, index=False)
             else:
                 with pd.ExcelWriter(SAVE_FILE, engine="openpyxl") as writer:
                     base_df.to_excel(writer, sheet_name=new_sheet_name, index=False)
             st.cache_data.clear()
-            st.sidebar.success(f"已创建新时间点: {new_sheet_name}")
+            st.sidebar.success(f"✅ 已创建: {new_sheet_name}")
         except Exception as e:
-            st.sidebar.error(f"创建失败：{e}")
+            st.sidebar.error(f"❌ 创建失败：{e}")
 
 # -------------------- 智能时间点选择 --------------------
 years_available = sorted(list({s.split("_")[0] for s in sheets if "_" in s}))
@@ -250,7 +229,6 @@ df = get_merged_df(time_choice, selected_groups)
 
 # -------------------- 图表函数 --------------------
 def chart_total(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
     emp_stats = df0.groupby("员工")["值"].sum().sort_values(ascending=False).reset_index()
     fig = go.Figure(go.Bar(
         x=emp_stats["员工"],
@@ -263,7 +241,6 @@ def chart_total(df0):
     return fig
 
 def chart_stack(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
     df_pivot = df0.pivot_table(index="明细", columns="员工", values="值", aggfunc="sum", fill_value=0)
     fig = go.Figure()
     for emp in df_pivot.columns:
@@ -272,7 +249,6 @@ def chart_stack(df0):
     return fig
 
 def chart_heat(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
     tasks = df0["明细"].unique().tolist()
     emps = df0["员工"].unique().tolist()
     data = []
@@ -292,7 +268,6 @@ def chart_heat(df0):
 
 # -------------------- 卡片显示 --------------------
 def show_cards(df0):
-    df0 = df0[df0["明细"] != "分数总和"]
     total_tasks = df0["明细"].nunique()
     total_people = df0["员工"].nunique()
     ps = df0.groupby("员工")["值"].sum()
@@ -303,17 +278,17 @@ def show_cards(df0):
         f"<div class='metric-card'><div class='metric-value'>{total_tasks}</div><div class='metric-label'>任务数</div></div>",
         unsafe_allow_html=True)
     c2.markdown(
-        f"<div class='metric-card'><div class='metric-value'>{total_people}</div><div class='metric-label'>人数</div></div>",
+        f"<div class='metric-card'><div class='metric-name'>{total_people}</div><div class='metric-label'>人数</div></div>",
         unsafe_allow_html=True)
     c3.markdown(
-        f"<div class='metric-card'><div class='metric-value'>{top_person}</div><div class='metric-label'>覆盖率最高</div></div>",
+        f"<div class='metric-card'><div class='metric-value'>{top_person}</div><div class='metric-label'>完成最高</div></div>",
         unsafe_allow_html=True)
     c4.markdown(
         f"<div class='metric-card'><div class='metric-value'>{avg_score}</div><div class='metric-label'>平均数</div></div>",
         unsafe_allow_html=True)
     st.markdown("<hr/>", unsafe_allow_html=True)
 
-# -------------------- 定义鲜艳的颜色列表（用于能力分析） --------------------
+# -------------------- 颜色 --------------------
 BRIGHT_COLORS = [
     "#FF0000", "#00FF00", "#0000FF", "#FFA500", "#800080",
     "#00FFFF", "#FFC0CB", "#FFFF00", "#008080", "#FF00FF"
@@ -339,9 +314,9 @@ if view == "编辑数据":
                     with pd.ExcelWriter(SAVE_FILE, engine="openpyxl") as writer:
                         edited_df.to_excel(writer, sheet_name=sheet_name, index=False)
                 st.cache_data.clear()
-                st.success(f"修改已保存到 {SAVE_FILE} ({sheet_name})")
+                st.success(f"✅ 保存成功：{sheet_name}")
             except Exception as e:
-                st.error(f"保存失败：{e}")
+                st.error(f"❌ 保存失败：{e}")
 
 elif view == "大屏轮播":
     if not time_choice:
@@ -383,7 +358,7 @@ elif view == "显示所有视图":
         st.warning("请在左侧选择时间点（月或季）后查看所有视图")
     else:
         show_cards(df)
-        charts = [("完成排名", chart_total(df)), ("任务对比（堆叠柱状图）", chart_stack(df)), ("热图", chart_heat(df))]
+        charts = [("完成排名", chart_total(df)), ("任务对比（堆叠柱状图）", chart_stack(df)), ("热力图", chart_heat(df))]
         for label, f in charts:
             st.subheader(label)
             if isinstance(f, go.Figure):
@@ -405,7 +380,6 @@ elif view == "能力分析":
         color_idx = 0
         for sheet in time_choice:
             df_sheet = get_merged_df([sheet], selected_groups)
-            df_sheet = df_sheet[df_sheet["明细"] != "分数总和"]
             df_pivot = df_sheet.pivot(index="明细", columns="员工", values="值").fillna(0)
             for emp in selected_emps:
                 fig1.add_trace(go.Scatter(
