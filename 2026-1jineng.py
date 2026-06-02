@@ -106,6 +106,16 @@ def load_data_from_gui():
             return [], {}, "文件不存在"
 
         st.sidebar.info(f"🔄 正在从 {file_path} 读取数据...")
+        return file_path
+
+    except Exception as e:
+        st.sidebar.error(f"读取路径异常：{str(e)}")
+        return None
+
+# 全局变量：文件路径
+SAVE_FILE = load_data_from_gui()
+if SAVE_FILE is None:
+    SAVE_FILE = "jixiao.xlsx"
 
 
 # 全局配色池（多颜色，区分不同时间点）
